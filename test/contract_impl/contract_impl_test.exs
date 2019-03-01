@@ -10,7 +10,7 @@ defmodule ElixirTools.ContractImplTest do
   end
 
   defmodule FakeModule do
-    use ElixirTools.ContractImpl, module:  ElixirTools.ContractImplTest.RealModule
+    use ElixirTools.ContractImpl, module: ElixirTools.ContractImplTest.RealModule
 
     @impl true
     def with_args(_, _), do: {:ok, "waa"}
@@ -21,7 +21,7 @@ defmodule ElixirTools.ContractImplTest do
   end
 
   test "raises if trying to access module that doesn't exist" do
-   assert RealModule.without_args == :ok
-   assert_raise UndefinedFunctionError, fn -> FakeModule.without_args end
+    assert RealModule.without_args() == :ok
+    assert_raise UndefinedFunctionError, fn -> FakeModule.without_args() end
   end
 end
