@@ -1,0 +1,71 @@
+version: 2
+jobs:
+ build:
+    docker:
+      - image: circleci/elixir:1.8.1
+
+    steps:
+      - checkout
+      - run:
+          name: Ensure the code is formated
+          command:  mix format --dry-run --check-formatted || exit 1
+
+      - run:
+          name: Install Rebar
+          command: mix local.rebar --force
+
+      - run:
+          name: Install Hex locally
+          command: mix local.hex --force
+
+      - restore_cache:
+          keys:
+            - v2-mix-deps-{{ .Branch }}
+            - v2-mix-deps-master
+
+      - restore_cache:
+          keys:
+            - v1-build-{{ .Branch }}
+            - v1-build-master
+      - run:
+          name: Fetch dependencies and compile
+          command: MIX_ENV=prod mix do deps.get, compile --warnings-as-errors
+
+      - save_cache:
+          key: v2-mix-deps-{{ .Branch }}-{{ epoch }}
+          paths:
+            - deps
+
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
+          name: Run tests
+          command: |
+            ./cc-test-reporter before-build
+            MIX_ENV=test mix coveralls.json
+            ./cc-test-reporter after-build --coverage-input-type excoveralls --exit-code $?
+
+      - run:
+          name: Ensure correct typings
+          command:  mix dialyzer --halt-exit-status || exit 1
+
+      - save_cache:
+          key: v1-build-{{ .Branch }}-{{ epoch }}
+          paths:
+            - _build
+
+      - run:
+          name: Check style guide
+          command: |
+            set +e
+            max_credo_score=0
+            mix credo --strict
+            score=$?
+            if [ $score -gt $max_credo_score ]; then
+              exit $score
+            fi
+            exit 0
