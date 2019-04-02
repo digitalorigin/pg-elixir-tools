@@ -1,15 +1,25 @@
 defmodule ElixirTools.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @description "Tools used in pagantis for making developing easier"
+
   def project do
     [
       app: :elixir_tools,
-      version: "0.1.0",
+      version: @version,
+      organization: "pagantis",
+      description: @description,
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: ["coveralls.json": :test],
-      deps: deps()
+      deps: deps(),
+      docs: [
+        extras: [
+          "README.md",
+        ]
+      ],
     ]
   end
 
