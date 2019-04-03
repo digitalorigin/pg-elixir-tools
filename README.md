@@ -9,7 +9,7 @@ The package can be used by adding it to your `mix.env`
 ```elixir
 def deps do
   [
-    {:elixir_tools, github: "digitalorigin/pg-elixir-tools"}
+    {:pagantis_elixir_tools, "~> 0.1.0"}
   ]
 end
 ```
