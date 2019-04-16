@@ -1,8 +1,8 @@
 # Events
 
-This module is responsible of handling events in the pagantis infrastructure. It provides an adapter to work with AWS SNS, but it can work with anything.
+The Events section of this library is responsible of handling events in the pagantis infrastructure. It provides an adapter to work with AWS SNS, but it can work with anything.
 
-Besides publishing this package verifies structure and definitions according to the internal packages. An implementation has been added as example.
+Besides publishing this package verifies structure and definitions according to the internal packages. An [implementation](examples/events/charge.ex) has been added as example.
 
 ## Config
 

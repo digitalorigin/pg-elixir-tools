@@ -83,7 +83,7 @@ defmodule ElixirTools.Events.EventTest do
     end
 
     test "returns error when they payload is not a map", context do
-      Enum.map([[], false, nil, 3, 0, "string", 'binary'], fn value ->
+      Enum.map([[], false, nil, 3, 0, "string", 'binary', :atom], fn value ->
         event = %{context.valid_event | payload: value}
 
         assert {:error, "Expected payload to be a map"} ==
