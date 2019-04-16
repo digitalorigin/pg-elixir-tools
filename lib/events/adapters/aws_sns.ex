@@ -18,7 +18,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
   @impl true
   @spec publish(Event.t(), [publish_opt]) :: :ok | {:error, term}
   def publish(event, opts \\ []) do
-    config = Application.get_env(:pg_payments, :events)[:adapter_config]
+    config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
     topic = opts[:topic] || Map.fetch!(config, :topic)
     sns_module = opts[:sns_module] || ExAws.SNS
     aws_module = opts[:aws_module] || ExAws
@@ -33,7 +33,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
 
   @spec add_envelope(Event.t(), [publish_opt]) :: map
   defp add_envelope(event, opts) do
-    config = Application.get_env(:pg_payments, :events)[:adapter_config]
+    config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
     group = opts[:group] || Map.fetch!(config, :group)
 
     %{

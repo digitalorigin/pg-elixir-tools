@@ -15,8 +15,10 @@ defmodule ElixirTools.Events.Event do
   @enforce_keys ~w(name)a
   defstruct [:name, payload: %{}, version: "1.0.0"]
 
-  @spec publish(t, module) :: return
-  def publish(event, adapter) do
+  @spec publish(t, module | nil) :: return
+  def publish(event, adapter \\ nil) do
+    adapter = adapter || Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter]
+
     with :ok <- validate(event) do
       try do
         adapter.publish(event)

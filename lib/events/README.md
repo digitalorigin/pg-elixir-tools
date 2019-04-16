@@ -17,10 +17,10 @@ AWS_SNS_TOPIC="arn:aws:sns:us-west-2:123456789012:topic2"
 To use, add to your `config.ex`:
 
 ```elixir
-config :elixir_tools, ElixirTools.Events,
+config :pagantis_elixir_tools, ElixirTools.Events,
   adapter: ElixirTools.Events.Adapters.AwsSns,
   adapter_config: %{
-    group: "PG_PAYMENTS",
+    group: "MY_GROUP",
     topic: System.get_env("AWS_SNS_TOPIC")
   }
 ```
