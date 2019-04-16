@@ -36,7 +36,12 @@ defmodule ElixirTools.MixProject do
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.9", only: :test},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_aws, "~> 2.0"},
+      {:ex_aws_sns, "~> 2.0"},
+      {:timex, "~> 3.1"},
+      {:elixir_uuid, "~> 1.2"},
+      {:jason, "~> 1.1"}
     ]
   end
 
