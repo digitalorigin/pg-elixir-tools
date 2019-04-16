@@ -28,3 +28,5 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env()}.exs"
+config :pagantis_elixir_tools, :schema, default_repo: ElixirTools.TestRepo
+# config :pagantis_elixir_tools, ecto_repos: [ElixirTools.Schema.TestRepo]
