@@ -42,4 +42,4 @@ Where
 `payload` - optional, map
 `version` - optional, string, `\d+.\d+.\d+` format
 
-An example can be found here[https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events](https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events).
+An example can be found here [https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events](https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events).
