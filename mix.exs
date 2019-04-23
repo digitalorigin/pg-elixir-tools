@@ -41,7 +41,8 @@ defmodule ElixirTools.MixProject do
       {:ex_aws_sns, "~> 2.0"},
       {:timex, "~> 3.1"},
       {:elixir_uuid, "~> 1.2"},
-      {:jason, "~> 1.1"}
+      {:jason, "~> 1.1"},
+      {:ecto_sql, "~> 3.0"}
     ]
   end
 
