@@ -2,7 +2,7 @@
 
 The Events section of this library is responsible of handling events in the pagantis infrastructure. It provides an adapter to work with AWS SNS, but it can work with anything.
 
-Besides publishing this package verifies structure and definitions according to the internal packages. An [implementation](examples/events/charge.ex) has been added as example.
+Besides publishing this package verifies structure and definitions according to the internal packages.
 
 ## Config
 
@@ -34,3 +34,14 @@ config :ex_aws, :sns,
   port: 4575,
   region: "us-west-2"
 ```
+
+## Usage 
+```elixir
+Event.publish(%Event{name: "NAME_EXAMPLE", payload: %{key: "value"}, version: "1.0.0"}
+```
+Where: 
+* `name` - obligatory, string, contains at least one `_`
+* `payload` - optional, map
+* `version` - optional, string, `\d+.\d+.\d+` format
+
+An example can be found here [https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events](https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events).
