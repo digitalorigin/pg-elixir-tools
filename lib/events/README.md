@@ -36,7 +36,9 @@ config :ex_aws, :sns,
 ```
 
 ## Usage 
-`Event.publish(%Event{name: "NAME_EXAMPLE", payload: %{key: "value"}, version: "1.0.0"}`
+```elixir
+Event.publish(%Event{name: "NAME_EXAMPLE", payload: %{key: "value"}, version: "1.0.0"}
+```
 Where 
 `name` - obligatory, string, countains at least one `_`
 `payload` - optional, map
