@@ -6,12 +6,13 @@ Besides publishing this package verifies structure and definitions according to 
 
 ## Config
 
-The next env vars need to be set to work with AWS and this library
+The next env vars need to be set to work with AWS and this library:
 
 ```bash
 AWS_ACCESS_KEY_ID=foo
 AWS_SECRET_ACCESS_KEY=bar
 AWS_SNS_TOPIC="arn:aws:sns:us-west-2:123456789012:topic2"
+AWS_DEFAULT_REGION="us-east-1"
 ```
 
 To use, add to your `config.ex`:
