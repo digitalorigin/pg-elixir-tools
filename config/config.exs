@@ -21,7 +21,7 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
-config :ex_aws, :sns, region: "eu-west-1"
+config :ex_aws, :sns, region: System.get_env("AWS_DEFAULT_REGION")
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
