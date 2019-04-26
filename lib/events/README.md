@@ -22,7 +22,8 @@ config :pagantis_elixir_tools, ElixirTools.Events,
   adapter: ElixirTools.Events.Adapters.AwsSns,
   adapter_config: %{
     group: "MY_GROUP",
-    topic: System.get_env("AWS_SNS_TOPIC")
+    topic: System.get_env("AWS_SNS_TOPIC"),
+    default_region: System.get_env("AWS_DEFAULT_REGION")
   }
 ```
 
@@ -36,11 +37,11 @@ config :ex_aws, :sns,
   region: "us-west-2"
 ```
 
-## Usage 
+## Usage
 ```elixir
 Event.publish(%Event{name: "NAME_EXAMPLE", payload: %{key: "value"}, version: "1.0.0"}
 ```
-Where: 
+Where:
 * `name` - obligatory, string, contains at least one `_`
 * `payload` - optional, map
 * `version` - optional, string, `\d+.\d+.\d+` format
