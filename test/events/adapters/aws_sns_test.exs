@@ -10,8 +10,8 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     use ElixirTools.ContractImpl, module: ExAws
 
     @impl true
-    def request(request) do
-      send(self(), [:ex_aws_success, request])
+    def request(request, opts) do
+      send(self(), [:ex_aws_success, request, opts])
       {:ok, %{status_code: 200}}
     end
   end
@@ -20,8 +20,8 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     use ElixirTools.ContractImpl, module: ExAws
 
     @impl true
-    def request(request) do
-      send(self(), [:ex_aws_error, request])
+    def request(request, opts) do
+      send(self(), [:ex_aws_error, request, opts])
       {:ok, %{status_code: 400}}
     end
   end
@@ -47,12 +47,13 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
       aws_module: FakeAwsSuccess,
       sns_module: FakeSnsSuccess,
       topic: "topic",
-      group: "group"
+      group: "group",
+      default_region: "region"
     ]
 
     assert :ok == AwsSns.publish(context.valid_event, opts)
     assert_received [:sns_success, _]
-    assert_received [:ex_aws_success, _]
+    assert_received [:ex_aws_success, _, _]
   end
 
   test "when aws returns unexpected reply", context do
@@ -60,7 +61,8 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
       aws_module: FakeAwsError,
       sns_module: FakeSnsSuccess,
       topic: "topic",
-      group: "group"
+      group: "group",
+      default_region: "region"
     ]
 
     log =
@@ -71,6 +73,6 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     assert log =~ "Unexpected result from AWS: {:ok, %{status_code: 400}}"
 
     assert_received [:sns_success, _]
-    assert_received [:ex_aws_error, _]
+    assert_received [:ex_aws_error, _, _]
   end
 end

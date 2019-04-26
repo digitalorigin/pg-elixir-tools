@@ -20,6 +20,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
   def publish(event, opts \\ []) do
     config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
     topic = opts[:topic] || Map.fetch!(config, :topic)
+    default_region = opts[:default_region] || Map.fetch!(config, :default_region)
     sns_module = opts[:sns_module] || ExAws.SNS
     aws_module = opts[:aws_module] || ExAws
 
@@ -27,7 +28,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
     |> add_envelope(opts)
     |> Jason.encode!()
     |> sns_module.publish(topic_arn: topic)
-    |> aws_module.request
+    |> aws_module.request(region: default_region)
     |> handle_publish
   end
 
