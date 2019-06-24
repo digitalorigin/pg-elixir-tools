@@ -23,10 +23,12 @@ use Mix.Config
 
 config :ex_aws, :sns, region: System.get_env("AWS_DEFAULT_REGION")
 
+config :phoenix, :json_library, Jason
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env()}.exs"
+
+File.exists?("config/#{Mix.env()}.exs") && import_config "#{Mix.env()}.exs"
