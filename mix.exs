@@ -42,6 +42,7 @@ defmodule ElixirTools.MixProject do
       {:timex, "~> 3.1"},
       {:elixir_uuid, "~> 1.2"},
       {:jason, "~> 1.1"},
+      {:ja_serializer, "~> 0.14"},
       {:ecto_sql, "~> 3.0"}
     ]
   end
