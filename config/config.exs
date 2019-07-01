@@ -23,6 +23,14 @@ use Mix.Config
 
 config :ex_aws, :sns, region: System.get_env("AWS_DEFAULT_REGION")
 
+config :pagantis_elixir_tools, ElixirTools.Metrix,
+  default_tags: %{},
+  adapter: ElixirTools.Metrix.Adapters.Ignore,
+  recurrent_metrics: [
+    {ElixirTools.Metrix.Recurring.ErlangStats, []}
+    # {PgPayments.Metrics.PendingOperations, []}
+  ]
+
 config :phoenix, :json_library, Jason
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
