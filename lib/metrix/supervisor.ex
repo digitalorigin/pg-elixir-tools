@@ -9,7 +9,7 @@ defmodule ElixirTools.Metrix.Supervisor do
                        :recurrent_metrics
                      ]
 
-  def start_link do
+  def start_link(_ \\ []) do
     Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 

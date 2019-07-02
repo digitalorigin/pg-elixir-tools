@@ -8,7 +8,7 @@ defmodule ElixirTools.Metrix do
 
   require Logger
 
-  @adapter Application.get_env(:pagantis_elixir_tools, Metrix)[:adapter]
+  @adapter Application.get_env(:pagantis_elixir_tools, ElixirTools.Metrix)[:adapter]
 
   @typep opts :: {:adapter_module, module}
 
