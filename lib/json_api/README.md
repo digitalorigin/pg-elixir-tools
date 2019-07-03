@@ -25,7 +25,7 @@ Prepare the router.ex, so all requests going to /api are JSON api and validated 
 Use in all controllers the JsonApi.Controller:
 
 ```elixir
-  use PgPaymentsWeb, :controller
+  use MyAppWeb, :controller
   use ElixirTools.JsonApi.Controller
 ```
 

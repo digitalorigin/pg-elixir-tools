@@ -17,14 +17,14 @@ defmodule ElixirTools.Metrix.Plug.TagsTest do
       path_params: %{},
       port: 4000,
       private: %{
-        PgPaymentsWeb.Router => {[], %{}},
+        MyApp.Router => {[], %{}},
         :phoenix_action => :my_method,
-        :phoenix_controller => PgPaymentsWeb.MyController,
-        :phoenix_endpoint => PgPaymentsWeb.Endpoint,
-        :phoenix_layout => {PgPaymentsWeb.LayoutView, :app},
+        :phoenix_controller => MyApp.MyController,
+        :phoenix_endpoint => MyApp.Endpoint,
+        :phoenix_layout => {MyApp.LayoutView, :app},
         :phoenix_pipelines => [:all],
-        :phoenix_router => PgPaymentsWeb.Router,
-        :phoenix_view => PgPaymentsWeb.StatusView
+        :phoenix_router => MyApp.Router,
+        :phoenix_view => MyApp.StatusView
       },
       query_params: %{},
       query_string: "",

@@ -28,7 +28,6 @@ config :pagantis_elixir_tools, ElixirTools.Metrix,
   adapter: ElixirTools.Metrix.Adapters.Ignore,
   recurrent_metrics: [
     {ElixirTools.Metrix.Recurring.ErlangStats, []}
-    # {PgPayments.Metrics.PendingOperations, []}
   ]
 
 config :phoenix, :json_library, Jason
