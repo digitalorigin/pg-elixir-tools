@@ -4,7 +4,7 @@ defmodule ElixirTools.ContractImpl do
   a method is right. This is done by creating dynamically a contract for all public functions.
 
   To use this helper, add to the contract of the module that you want to implement:
-  `    use ElixirTools.ContractImpl, module: PgPayments.TestModule`
+  `    use ElixirTools.ContractImpl, module: MyApp.TestModule`
 
   Then, all mocked methods must be using `@impl true`.
 

@@ -6,7 +6,7 @@ a method is right. This is done by creating dynamically a contract for all publi
 To use this helper, add to the contract of the module that you want to implement:
 
 ```elixir
-use ElixirTools.ContractImpl, module: PgPayments.TestModule
+use ElixirTools.ContractImpl, module: MyApp.TestModule
 ```
 
 Then, all mocked methods must be using `@impl true`.
@@ -22,7 +22,7 @@ files thus not dialyzed.
 ## Example
 
 ```elixir
-use ElixirTools.ContractImpl, module: PgPayments.TestModule
+use ElixirTools.ContractImpl, module: MyApp.TestModule
 
 @override true
 def my_method, do: :something
