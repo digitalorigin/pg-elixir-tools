@@ -12,7 +12,7 @@ config :pagantis_elixir_tools, ElixirTools.Schema, default_repo: YourDefaultRepo
 After this most likely you want to add 
 
 ```elixir
-  use PgPayments.Schema
+  use ElixirTools.Schema
 ```
 to your project schemas. After this you can use it as simple as
 ```elixir
