@@ -3,13 +3,6 @@ defmodule ElixirTools.SchemaTest do
   alias ElixirTools.Schema
   alias Support.{TestSchema, UniqueConstraintTestSchema}
 
-#  @repo ElixirTools.Repo
-#  setup do
-#    :ok = Ecto.Adapters.SQL.Sandbox.checkout(@repo)
-#
-#    %{}
-#  end
-#
   describe "repo/1" do
     test "returns default" do
       assert Schema.default_repo() == Support.TestRepo

@@ -6,7 +6,7 @@ defmodule ElixirTools.Schema do
 
   @type id :: Ecto.UUID.t()
 
-  @default_repo Application.get_env(:pg_payments, ElixirTools.Schema)[:default_repo]
+  @default_repo Application.get_env(:pagantis_elixir_tools, ElixirTools.Schema)[:default_repo]
   def default_repo, do: @default_repo
 
   # Required methods in schemas
