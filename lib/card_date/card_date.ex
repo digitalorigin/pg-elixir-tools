@@ -143,6 +143,6 @@ defmodule ElixirTools.CardDate do
   def parse_card_date!(card_date) do
     card_date |> enforce_card_date_format!() |> Timex.parse!("{0M}/{YY}")
   rescue
-    e in Timex.Parse.ParseError -> reraise(@invalid_format_error, e)
+    Timex.Parse.ParseError -> reraise(@invalid_format_error, __STACKTRACE__)
   end
 end
