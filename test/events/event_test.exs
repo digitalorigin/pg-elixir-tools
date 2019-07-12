@@ -17,7 +17,8 @@ defmodule ElixirTools.Events.EventTest do
 
   setup do
     valid_event = %Event{
-      name: "TEST_EVENT"
+      name: "TEST_EVENT",
+      event_id_seed: "016c25fd-70e0-56fe-9d1a-56e80fa20b82"
     }
 
     %{valid_event: valid_event}

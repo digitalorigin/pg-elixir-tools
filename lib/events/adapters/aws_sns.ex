@@ -38,7 +38,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
     group = opts[:group] || Map.fetch!(config, :group)
 
     %{
-      id: UUID.uuid4(),
+      id: UUID.uuid5(event.event_id_seed, event.name),
       action: String.upcase(event.name),
       group: group,
       occurred_at: Timex.format!(Timex.now(), "{ISO:Extended:Z}"),
