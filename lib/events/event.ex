@@ -7,13 +7,14 @@ defmodule ElixirTools.Events.Event do
   @type t :: %Event{
           name: String.t(),
           version: String.t(),
-          payload: map
+          payload: map,
+          event_id_seed: Ecto.UUID.t()
         }
 
   @typep return :: :ok | {:error, reason :: String.t()}
 
-  @enforce_keys ~w(name)a
-  defstruct [:name, payload: %{}, version: "1.0.0"]
+  @enforce_keys ~w(name event_id_seed)a
+  defstruct [:name, :event_id_seed, payload: %{}, version: "1.0.0"]
 
   @spec publish(t, module | nil) :: return
   def publish(event, adapter \\ nil) do
