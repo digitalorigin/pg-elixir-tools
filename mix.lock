@@ -40,7 +40,7 @@
   "spandex_ecto": {:hex, :spandex_ecto, "0.6.0", "feedda8456deb37a87ee698f1f779304b68e7e42afc7c1fe5b9f801a732b89d6", [:mix], [{:spandex, "~> 2.2", [hex: :spandex, repo: "hexpm", optional: false]}], "hexpm"},
   "spandex_phoenix": {:hex, :spandex_phoenix, "0.4.1", "d52e12f801fce4efba658ac4e98be18ea9903ecf9f37682b401656ed8d9c7abe", [:mix], [{:plug, "~> 1.3", [hex: :plug, repo: "hexpm", optional: false]}, {:spandex, "~> 2.2", [hex: :spandex, repo: "hexpm", optional: false]}], "hexpm"},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.4", "f0eafff810d2041e93f915ef59899c923f4568f4585904d010387ed74988e77b", [:make, :mix, :rebar3], [], "hexpm"},
-  "statix": {:hex, :statix, "1.2.0", "0d12a38ed37fee6fb8aa20f7e6ae364208aa977286ddb874a77b751cc6a5b357", [:mix], [], "hexpm"},
+  "statix": {:hex, :statix, "1.2.1", "4f23c8cc2477ea0de89fed5e34f08c54b0d28b838f7b8f26613155f2221bb31e", [:mix], [], "hexpm"},
   "telemetry": {:hex, :telemetry, "0.4.0", "8339bee3fa8b91cb84d14c2935f8ecf399ccd87301ad6da6b71c09553834b2ab", [:rebar3], [], "hexpm"},
   "timex": {:hex, :timex, "3.6.1", "efdf56d0e67a6b956cc57774353b0329c8ab7726766a11547e529357ffdc1d56", [:mix], [{:combine, "~> 0.10", [hex: :combine, repo: "hexpm", optional: false]}, {:gettext, "~> 0.10", [hex: :gettext, repo: "hexpm", optional: false]}, {:tzdata, "~> 0.1.8 or ~> 0.5 or ~> 1.0.0", [hex: :tzdata, repo: "hexpm", optional: false]}], "hexpm"},
   "tzdata": {:hex, :tzdata, "1.0.1", "f6027a331af7d837471248e62733c6ebee86a72e57c613aa071ebb1f750fc71a", [:mix], [{:hackney, "~> 1.0", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm"},
