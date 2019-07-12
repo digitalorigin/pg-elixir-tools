@@ -33,6 +33,7 @@ defmodule ElixirTools.Events.Event do
   def validate(event) do
     with :ok <- validate_name(event.name),
          :ok <- validate_payload(event.payload),
+         :ok <- validate_event_id_seed(event.event_id_seed),
          :ok <- validate_version(event.version) do
       :ok
     end
@@ -49,6 +50,15 @@ defmodule ElixirTools.Events.Event do
 
       true ->
         :ok
+    end
+  end
+
+  @spec validate_event_id_seed(any) :: return
+  defp validate_event_id_seed(event_id_seed) do
+    with {:ok, _} <- UUID.info(event_id_seed) do
+      :ok
+    else
+      _ -> {:error, "Expected a UUID string as event_id_seed, but got #{inspect(event_id_seed)}"}
     end
   end
 

@@ -91,5 +91,12 @@ defmodule ElixirTools.Events.EventTest do
                  Event.publish(event, FakeAdapterSuccess)
       end)
     end
+
+    test "returns error when event_id_seed is not a UUID string", context do
+      event = %{context.valid_event | event_id_seed: "not uuid string"}
+
+      assert {:error, "Expected a UUID string as event_id_seed, but got \"not uuid string\""} ==
+               Event.publish(event, FakeAdapterSuccess)
+    end
   end
 end
