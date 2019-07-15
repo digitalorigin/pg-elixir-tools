@@ -3,11 +3,9 @@ defmodule ElixirTools.Metrix.Adapters.LogTest do
 
   import ExUnit.CaptureLog
 
-  alias ElixirTools.Metrix
   alias ElixirTools.Metrix.Adapters.Log
 
   setup do
-    Metrix.Supervisor.start_link()
     Logger.configure(level: :debug)
   end
 
