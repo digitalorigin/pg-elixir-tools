@@ -1,6 +1,8 @@
 defmodule ElixirTools.Events.Event do
   @moduledoc """
-  A structure for working with events
+  A structure for working with events.
+  `event_id_seed` is used for `event_id` generation(UUID5) together with `name` & `version`.
+  So if all values are the same event will be updated.
   """
   alias __MODULE__
 
