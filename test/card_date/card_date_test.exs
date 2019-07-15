@@ -81,14 +81,7 @@ defmodule ElixirTools.CardDateTest do
   end
 
   test "Various invalid inputs for: from_date!" do
-    invalid_card_dates = [
-      12,
-      "2022-12-01",
-      %{},
-      [],
-      nil,
-      ~T[20:03:08.001]
-    ]
+    invalid_card_dates = [12, "2022-12-01", %{}, [], nil, ~T[20:03:08.001]]
 
     Enum.each(invalid_card_dates, fn invalid_card_date ->
       assert_raise RuntimeError, "Invalid Date provided", fn ->
