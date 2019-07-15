@@ -43,7 +43,8 @@ Event.publish(%Event{name: "NAME_EXAMPLE", event_id_seed: "f367d382-6452-435c-ad
 ```
 Where:
 * `name` - obligatory, string, contains at least one `_`
-* `event_id_seed` - obligatory, string in UUID format, which will be used together with `name` as a seed for event_id generation. If both values will be the same - event will be updated in datalake.
+* `event_id_seed` - obligatory, string in UUID format, which will be used together with `name` and `version` as a seed for event_id generation. 
+If all values will be the same -> event_id will be the same -> event will be updated in S3.
 * `payload` - optional, map
 * `version` - optional, string, `\d+.\d+.\d+` format
 
