@@ -147,6 +147,20 @@ defmodule ElixirTools.CardDate do
     Timex.Parse.ParseError -> reraise(@invalid_format_error, __STACKTRACE__)
   end
 
+  @doc """
+  Takes a Date-compatible input and generates a `card_date` string.
+
+  ## Examples
+
+      iex> ElixirTools.CardDate.from_date!(~D[2012-09-01])
+      "09/12"
+
+      iex> ElixirTools.CardDate.from_date!(~N[2022-12-03 12:34:56])
+      "12/22"
+
+      iex> ElixirTools.CardDate.from_date!("2001-09-11")
+      ** (RuntimeError) Invalid Date provided
+  """
   @typep date_param :: Date.t() | NaiveDateTime.t() | DateTime.t()
   @spec from_date!(date_param) :: <<_::40>> | no_return()
   def from_date!(date) do
