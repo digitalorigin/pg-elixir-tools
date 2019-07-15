@@ -14,6 +14,7 @@ defmodule ElixirTools.CardDate do
   """
 
   @invalid_format_error "Invalid card_date format"
+  @invalid_date_error "Invalid Date provided"
 
   @typep card_date :: <<_::40>>
   @typep iso_date :: <<_::80>>
@@ -144,5 +145,14 @@ defmodule ElixirTools.CardDate do
     card_date |> enforce_card_date_format!() |> Timex.parse!("{0M}/{YY}")
   rescue
     Timex.Parse.ParseError -> reraise(@invalid_format_error, __STACKTRACE__)
+  end
+
+  @typep date_param :: Date.t() | NaiveDateTime.t() | DateTime.t()
+  @spec from_date!(date_param) :: <<_::40>> | no_return()
+  def from_date!(date) do
+    Timex.format!(date, "{0M}/{YY}")
+  rescue
+    ArgumentError -> reraise(@invalid_date_error, __STACKTRACE__)
+    KeyError -> reraise(@invalid_date_error, __STACKTRACE__)
   end
 end

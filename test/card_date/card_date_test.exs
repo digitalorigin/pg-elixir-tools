@@ -5,7 +5,7 @@ defmodule ElixirTools.CardDateTest do
   doctest CardDateHelper
 
   setup _params do
-    %{valid_card_date: "02/22"}
+    %{valid_card_date: "02/22", valid_date: ~D[2022-02-01]}
   end
 
   describe "get_month!/1" do
@@ -57,6 +57,12 @@ defmodule ElixirTools.CardDateTest do
     end
   end
 
+  describe "from_date!/1" do
+    test "If a valid Date is entered, return the `card_date` representation", context do
+      assert CardDateHelper.from_date!(context.valid_date) == "02/22"
+    end
+  end
+
   describe "Various invalid inputs for: " do
     @functions ~w(get_month! get_year! enforce_card_date_format! to_iso_string! to_date! parse_card_date!)a
     @invalid_card_dates [12, "12.22", "12-22", "2022-12-01", "2022/12/01", "02 22", %{}, [], nil]
@@ -70,6 +76,16 @@ defmodule ElixirTools.CardDateTest do
             apply(CardDateHelper, fun, [invalid_card_date])
           end
         end)
+      end
+    end)
+  end
+
+  test "Various invalid inputs for: from_date!" do
+    invalid_card_dates = [12, "2022-12-01", %{}, [], nil, ~T[20:03:08.001]]
+
+    Enum.each(invalid_card_dates, fn invalid_card_date ->
+      assert_raise RuntimeError, "Invalid Date provided", fn ->
+        CardDateHelper.from_date!(invalid_card_date)
       end
     end)
   end
