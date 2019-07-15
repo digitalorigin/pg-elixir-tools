@@ -70,15 +70,15 @@ defmodule ElixirTools.Events.Event do
   @spec validate_version(any) :: return
   defp validate_version(version) do
     with {:is_string, true} <- {:is_string, is_binary(version)},
-         {:split, [mayor, minor, fix]} <- {:split, String.split(version, ".")},
-         {:parse_mayor, {_, ""}} <- {:parse_mayor, Integer.parse(mayor)},
+         {:split, [major, minor, fix]} <- {:split, String.split(version, ".")},
+         {:parse_major, {_, ""}} <- {:parse_major, Integer.parse(major)},
          {:parse_minor, {_, ""}} <- {:parse_minor, Integer.parse(minor)},
          {:parse_fix, {_, ""}} <- {:parse_fix, Integer.parse(fix)} do
       :ok
     else
       {:is_string, false} -> {:error, "Expected a string with a version"}
       {:split, _} -> {:error, "Expected version with 3 dots, but received #{version}"}
-      {:parse_mayor, _} -> {:error, "Expected a number for the mayor, but received #{version}"}
+      {:parse_major, _} -> {:error, "Expected a number for the major, but received #{version}"}
       {:parse_minor, _} -> {:error, "Expected a number for the minor, but received #{version}"}
       {:parse_fix, _} -> {:error, "Expected a number for the fix, but received #{version}"}
     end

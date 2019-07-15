@@ -41,17 +41,17 @@ defmodule ElixirTools.Events.EventTest do
                Event.publish(event, FakeAdapterSuccess)
     end
 
-    test "returns error when version is not having mayor.minor.fix format", context do
+    test "returns error when version is not having major.minor.fix format", context do
       event = %{context.valid_event | version: "1.1"}
 
       assert {:error, "Expected version with 3 dots, but received 1.1"} ==
                Event.publish(event, FakeAdapterSuccess)
     end
 
-    test "returns error when version mayor is not an integer", context do
+    test "returns error when version major is not an integer", context do
       event = %{context.valid_event | version: "1a.1.1"}
 
-      assert {:error, "Expected a number for the mayor, but received 1a.1.1"} ==
+      assert {:error, "Expected a number for the major, but received 1a.1.1"} ==
                Event.publish(event, FakeAdapterSuccess)
     end
 
