@@ -39,10 +39,12 @@ config :ex_aws, :sns,
 
 ## Usage
 ```elixir
-Event.publish(%Event{name: "NAME_EXAMPLE", payload: %{key: "value"}, version: "1.0.0"}
+Event.publish(%Event{name: "NAME_EXAMPLE", event_id_seed: "f367d382-6452-435c-ad83-3477bd530349", payload: %{key: "value"}, version: "1.0.0"}
 ```
 Where:
 * `name` - obligatory, string, contains at least one `_`
+* `event_id_seed` - obligatory, string in UUID format, which will be used together with `name` and `version` as a seed for event_id generation. 
+If all values will be the same -> event_id will be the same -> event will be updated in S3.
 * `payload` - optional, map
 * `version` - optional, string, `\d+.\d+.\d+` format
 

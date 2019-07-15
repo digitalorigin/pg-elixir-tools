@@ -17,7 +17,8 @@ defmodule ElixirTools.Events.EventTest do
 
   setup do
     valid_event = %Event{
-      name: "TEST_EVENT"
+      name: "TEST_EVENT",
+      event_id_seed: "016c25fd-70e0-56fe-9d1a-56e80fa20b82"
     }
 
     %{valid_event: valid_event}
@@ -89,6 +90,13 @@ defmodule ElixirTools.Events.EventTest do
         assert {:error, "Expected payload to be a map"} ==
                  Event.publish(event, FakeAdapterSuccess)
       end)
+    end
+
+    test "returns error when event_id_seed is not a UUID string", context do
+      event = %{context.valid_event | event_id_seed: "not uuid string"}
+
+      assert {:error, "Expected a UUID string as event_id_seed, but got \"not uuid string\""} ==
+               Event.publish(event, FakeAdapterSuccess)
     end
   end
 end

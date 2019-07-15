@@ -36,9 +36,10 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
   defp add_envelope(event, opts) do
     config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
     group = opts[:group] || Map.fetch!(config, :group)
+    id = UUID.uuid5(event.event_id_seed, event.name <> event.version)
 
     %{
-      id: UUID.uuid4(),
+      id: id,
       action: String.upcase(event.name),
       group: group,
       occurred_at: Timex.format!(Timex.now(), "{ISO:Extended:Z}"),

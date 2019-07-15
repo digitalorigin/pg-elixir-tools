@@ -1,19 +1,22 @@
 defmodule ElixirTools.Events.Event do
   @moduledoc """
-  A structure for working with events
+  A structure for working with events.
+  `event_id_seed` is used for `event_id` generation(UUID5) together with `name` & `version`.
+  So if all values are the same event will be updated.
   """
   alias __MODULE__
 
   @type t :: %Event{
           name: String.t(),
           version: String.t(),
-          payload: map
+          payload: map,
+          event_id_seed: Ecto.UUID.t()
         }
 
   @typep return :: :ok | {:error, reason :: String.t()}
 
-  @enforce_keys ~w(name)a
-  defstruct [:name, payload: %{}, version: "1.0.0"]
+  @enforce_keys ~w(name event_id_seed)a
+  defstruct [:name, :event_id_seed, payload: %{}, version: "1.0.0"]
 
   @spec publish(t, module | nil) :: return
   def publish(event, adapter \\ nil) do
@@ -32,6 +35,7 @@ defmodule ElixirTools.Events.Event do
   def validate(event) do
     with :ok <- validate_name(event.name),
          :ok <- validate_payload(event.payload),
+         :ok <- validate_event_id_seed(event.event_id_seed),
          :ok <- validate_version(event.version) do
       :ok
     end
@@ -48,6 +52,14 @@ defmodule ElixirTools.Events.Event do
 
       true ->
         :ok
+    end
+  end
+
+  @spec validate_event_id_seed(any) :: return
+  defp validate_event_id_seed(event_id_seed) do
+    case UUID.info(event_id_seed) do
+      {:ok, _} -> :ok
+      _ -> {:error, "Expected a UUID string as event_id_seed, but got #{inspect(event_id_seed)}"}
     end
   end
 
