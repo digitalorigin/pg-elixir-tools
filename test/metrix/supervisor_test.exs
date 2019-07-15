@@ -4,7 +4,6 @@ defmodule ElixirTools.Metrix.SupervisorTest do
   alias ElixirTools.Metrix
 
   setup do
-    Metrix.Supervisor.start_link()
     Logger.configure(level: :debug)
   end
 

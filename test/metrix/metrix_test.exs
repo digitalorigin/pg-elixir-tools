@@ -3,7 +3,6 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
 
   import ExUnit.CaptureLog
 
-  alias ElixirTools.Metrix
   alias ElixirTools.Metrix.Adapters
 
   defmodule FailAdapter do
@@ -20,7 +19,6 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
   end
 
   setup do
-    Metrix.Supervisor.start_link()
     Logger.configure(level: :debug)
     default_tags = Application.get_env(:pagantis_elixir_tools, ElixirTools.Metrix)[:default_tags]
 
