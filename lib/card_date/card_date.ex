@@ -153,5 +153,6 @@ defmodule ElixirTools.CardDate do
     Timex.format!(date, "{0M}/{YY}")
   rescue
     ArgumentError -> reraise(@invalid_date_error, __STACKTRACE__)
+    KeyError -> reraise(@invalid_date_error, __STACKTRACE__)
   end
 end
