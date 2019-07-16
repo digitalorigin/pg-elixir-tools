@@ -12,6 +12,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
   @typep publish_opt ::
            {:aws_module, module}
            | {:sns_module, module}
+           | {:uuid_module, module}
            | {:group, String.t()}
            | {:topic, String.t()}
 
@@ -34,9 +35,13 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
 
   @spec add_envelope(Event.t(), [publish_opt]) :: map
   defp add_envelope(event, opts) do
+    uuid_module = opts[:uuid_module] || UUID
+
     config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
     group = opts[:group] || Map.fetch!(config, :group)
-    id = UUID.uuid5(event.event_id_seed, event.name <> event.version)
+
+    uuid_seed_2 = "#{event.name}-#{event.version}-#{event.event_id_seed_optional}"
+    id = uuid_module.uuid5(event.event_id_seed, uuid_seed_2)
 
     %{
       id: id,
