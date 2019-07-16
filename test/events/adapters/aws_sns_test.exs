@@ -36,6 +36,16 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     end
   end
 
+  defmodule FakeUuid do
+    use ElixirTools.ContractImpl, module: UUID
+
+    @impl true
+    def uuid5(uuid_seed_1, uuid_seed_2) do
+      send(self(), [:uuid5, uuid_seed_1, uuid_seed_2])
+      "55989ea4-d947-4f16-b8c8-e0e888facff4"
+    end
+  end
+
   setup do
     valid_event = %Event{
       name: "TEST_EVENT",
@@ -43,6 +53,26 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     }
 
     %{valid_event: valid_event}
+  end
+
+  test "uuid5 generation is called with a proper seed", context do
+    opts = [
+      aws_module: FakeAwsSuccess,
+      sns_module: FakeSnsSuccess,
+      uuid_module: FakeUuid,
+      topic: "topic",
+      group: "group",
+      default_region: "region"
+    ]
+
+    event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
+    assert :ok == AwsSns.publish(event, opts)
+
+    assert_received [
+      :uuid5,
+      "016c25fd-70e0-56fe-9d1a-56e80fa20b82",
+      "TEST_EVENT-1.0.0-event_id_seed_optional"
+    ]
   end
 
   test "when aws returns the expected reply", context do

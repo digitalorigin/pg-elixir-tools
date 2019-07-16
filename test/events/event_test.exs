@@ -98,5 +98,12 @@ defmodule ElixirTools.Events.EventTest do
       assert {:error, "Expected a UUID string as event_id_seed, but got \"not uuid string\""} ==
                Event.publish(event, FakeAdapterSuccess)
     end
+
+    test "returns error when event_id_seed_optional is not a string", context do
+      event = %{context.valid_event | event_id_seed_optional: 123}
+
+      assert {:error, "Expected a string as event_id_seed_optional, but got 123"} ==
+               Event.publish(event, FakeAdapterSuccess)
+    end
   end
 end

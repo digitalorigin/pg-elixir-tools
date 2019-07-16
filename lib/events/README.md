@@ -43,8 +43,9 @@ Event.publish(%Event{name: "NAME_EXAMPLE", event_id_seed: "f367d382-6452-435c-ad
 ```
 Where:
 * `name` - obligatory, string, contains at least one `_`
-* `event_id_seed` - obligatory, string in UUID format, which will be used together with `name` and `version` as a seed for event_id generation. 
+* `event_id_seed` - obligatory, string in UUID format, which will be used together with `name`, `version` & `event_id_seed_optional` as a seed for event_id generation. 
 If all values will be the same -> event_id will be the same -> event will be updated in S3.
+* `event_id_seed_optional` - string, optional part used for event_id generation. By default - ""(empty string)
 * `payload` - optional, map
 * `version` - optional, string, `\d+.\d+.\d+` format
 
