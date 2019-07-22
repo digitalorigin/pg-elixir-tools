@@ -106,6 +106,12 @@ defmodule ElixirTools.Events.EventTest do
                Event.publish(event, FakeAdapterSuccess)
     end
 
+    test "returns ok when event_id_seed_optional is string", context do
+      event = %{context.valid_event | event_id_seed_optional: "i am string"}
+
+      assert :ok == Event.publish(event, FakeAdapterSuccess)
+    end
+
     test "returns error when occurred_at is not a datetime", context do
       event = %{context.valid_event | occurred_at: "not a datetime"}
 
