@@ -15,6 +15,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
            | {:uuid_module, module}
            | {:group, String.t()}
            | {:topic, String.t()}
+           | {:timex_module, module}
 
   @impl true
   @spec publish(Event.t(), [publish_opt]) :: :ok | {:error, term}
@@ -36,6 +37,7 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
   @spec add_envelope(Event.t(), [publish_opt]) :: map
   defp add_envelope(event, opts) do
     uuid_module = opts[:uuid_module] || UUID
+    timex_module = opts[:timex_module] || Timex
 
     config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
     group = opts[:group] || Map.fetch!(config, :group)
@@ -43,11 +45,13 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
     uuid_seed_2 = "#{event.name}-#{event.version}-#{event.event_id_seed_optional}"
     id = uuid_module.uuid5(event.event_id_seed, uuid_seed_2)
 
+    occurred_at = event.occurred_at || timex_module.now()
+
     %{
       id: id,
       action: String.upcase(event.name),
       group: group,
-      occurred_at: Timex.format!(Timex.now(), "{ISO:Extended:Z}"),
+      occurred_at: Timex.format!(occurred_at, "{ISO:Extended:Z}"),
       version: event.version,
       payload: event.payload
     }

@@ -66,13 +66,67 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     ]
 
     event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
-    assert :ok == AwsSns.publish(event, opts)
+    assert AwsSns.publish(event, opts) == :ok
 
     assert_received [
       :uuid5,
       "016c25fd-70e0-56fe-9d1a-56e80fa20b82",
       "TEST_EVENT-1.0.0-event_id_seed_optional"
     ]
+  end
+
+  test "when event.occurred_at sent assert that it's used", context do
+    opts = [
+      aws_module: FakeAwsSuccess,
+      sns_module: FakeSnsSuccess,
+      topic: "topic",
+      group: "group",
+      default_region: "region"
+    ]
+
+    occurred_at = Timex.to_datetime({{2015, 6, 29}, {4, 44, 44}}, "Etc/UTC")
+    event = %{context.valid_event | occurred_at: occurred_at}
+
+    assert AwsSns.publish(event, opts) == :ok
+
+    assert_received [
+      :sns_success,
+      "{\"action\":\"TEST_EVENT\",\"group\":\"group\",\"id\":\"e8db4c36-f0b6-585a-a0df-0c388e87599b\",\"occurred_at\":\"2015-06-29T04:44:44Z\",\"payload\":{},\"version\":\"1.0.0\"}"
+    ]
+
+    assert_received [:ex_aws_success, _, _]
+  end
+
+  test "when event.occurred_at not sent assert that Timex.now is used", context do
+    defmodule FakeTimex do
+      use ElixirTools.ContractImpl, module: Timex
+
+      @impl true
+      def now() do
+        send(self(), :timex_now)
+        Timex.to_datetime({{2015, 6, 29}, {5, 55, 55}}, "Etc/UTC")
+      end
+    end
+
+    opts = [
+      aws_module: FakeAwsSuccess,
+      sns_module: FakeSnsSuccess,
+      timex_module: FakeTimex,
+      topic: "topic",
+      group: "group",
+      default_region: "region"
+    ]
+
+    assert AwsSns.publish(context.valid_event, opts) == :ok
+
+    assert_received :timex_now
+
+    assert_received [
+      :sns_success,
+      "{\"action\":\"TEST_EVENT\",\"group\":\"group\",\"id\":\"e8db4c36-f0b6-585a-a0df-0c388e87599b\",\"occurred_at\":\"2015-06-29T05:55:55Z\",\"payload\":{},\"version\":\"1.0.0\"}"
+    ]
+
+    assert_received [:ex_aws_success, _, _]
   end
 
   test "when aws returns the expected reply", context do
@@ -84,7 +138,7 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
       default_region: "region"
     ]
 
-    assert :ok == AwsSns.publish(context.valid_event, opts)
+    assert AwsSns.publish(context.valid_event, opts) == :ok
     assert_received [:sns_success, _]
     assert_received [:ex_aws_success, _, _]
   end
