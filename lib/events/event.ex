@@ -21,10 +21,10 @@ defmodule ElixirTools.Events.Event do
   defstruct [
     :name,
     :event_id_seed,
+    :occurred_at,
     payload: %{},
     version: "1.0.0",
-    event_id_seed_optional: "",
-    occurred_at: nil
+    event_id_seed_optional: ""
   ]
 
   @spec publish(t, module | nil) :: return

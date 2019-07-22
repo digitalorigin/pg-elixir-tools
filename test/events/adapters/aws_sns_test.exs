@@ -66,7 +66,7 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     ]
 
     event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
-    assert :ok == AwsSns.publish(event, opts)
+    assert AwsSns.publish(event, opts) == :ok
 
     assert_received [
       :uuid5,
@@ -87,7 +87,7 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
     occurred_at = Timex.to_datetime({{2015, 6, 29}, {4, 44, 44}}, "Etc/UTC")
     event = %{context.valid_event | occurred_at: occurred_at}
 
-    assert :ok == AwsSns.publish(event, opts)
+    assert AwsSns.publish(event, opts) == :ok
 
     assert_received [
       :sns_success,
@@ -117,7 +117,7 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
       default_region: "region"
     ]
 
-    assert :ok == AwsSns.publish(context.valid_event, opts)
+    assert AwsSns.publish(context.valid_event, opts) == :ok
 
     assert_received :timex_now
 
@@ -138,7 +138,7 @@ defmodule ElixirTools.Events.Adapters.AwsSnsTest do
       default_region: "region"
     ]
 
-    assert :ok == AwsSns.publish(context.valid_event, opts)
+    assert AwsSns.publish(context.valid_event, opts) == :ok
     assert_received [:sns_success, _]
     assert_received [:ex_aws_success, _, _]
   end
