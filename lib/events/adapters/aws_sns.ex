@@ -43,11 +43,14 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
     uuid_seed_2 = "#{event.name}-#{event.version}-#{event.event_id_seed_optional}"
     id = uuid_module.uuid5(event.event_id_seed, uuid_seed_2)
 
+    occurred_at = event.occurred_at || Timex.now()
+    occurred_at = Timex.format!(occurred_at, "{ISO:Extended:Z}")
+
     %{
       id: id,
       action: String.upcase(event.name),
       group: group,
-      occurred_at: Timex.format!(Timex.now(), "{ISO:Extended:Z}"),
+      occurred_at: occurred_at,
       version: event.version,
       payload: event.payload
     }

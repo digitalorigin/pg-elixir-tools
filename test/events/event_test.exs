@@ -105,5 +105,18 @@ defmodule ElixirTools.Events.EventTest do
       assert {:error, "Expected a string as event_id_seed_optional, but got 123"} ==
                Event.publish(event, FakeAdapterSuccess)
     end
+
+    test "returns error when occurred_at is not a datetime", context do
+      event = %{context.valid_event | occurred_at: "not a datetime"}
+
+      assert {:error, "Expected a DateTime as occurred_at, but got \"not a datetime\""} ==
+               Event.publish(event, FakeAdapterSuccess)
+    end
+
+    test "returns ok when occurred_at is datetime", context do
+      event = %{context.valid_event | occurred_at: Timex.now()}
+
+      assert :ok == Event.publish(event, FakeAdapterSuccess)
+    end
   end
 end
