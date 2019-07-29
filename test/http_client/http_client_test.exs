@@ -111,30 +111,39 @@ defmodule ElixirTools.HttpClientTest do
 
       assert HttpClient.do_request(timeout_request, FakeAdapter) == {:error, :http_timeout}
     end
+  end
 
+  describe "get/3" do
     test "If connection is closed, retry once and return the http client response" do
-      closed_request = fn _headers, _connection_options ->
-        {:error, %HTTPoison.Error{reason: :closed, id: "closed_id"}}
+      defmodule HttpClientClosed do
+        use ElixirTools.ContractImpl, module: HTTPoison
+
+        @impl true
+        def get(_, _, _), do: {:error, %HTTPoison.Error{reason: :closed, id: "closed_id"}}
       end
 
       expected_response = {:error, %HTTPoison.Error{id: "closed_id", reason: :closed}}
 
-      assert HttpClient.do_request(closed_request, FakeAdapter) == expected_response
+      assert HttpClient.get(FakeAdapter, "path", [{:http_client, HttpClientClosed}]) ==
+               expected_response
     end
 
     test "If an unhandled http client error is passed, return it" do
-      failed_request = fn _headers, _connection_options ->
-        {:error, %HTTPoison.Error{reason: :some_random_error_reason, id: "unhandled_id"}}
+      defmodule HttpClientError do
+        use ElixirTools.ContractImpl, module: HTTPoison
+
+        @impl true
+        def get(_, _, _),
+          do: {:error, %HTTPoison.Error{reason: :some_random_error_reason, id: "unhandled_id"}}
       end
 
       expected_response =
         {:error, %HTTPoison.Error{id: "unhandled_id", reason: :some_random_error_reason}}
 
-      assert HttpClient.do_request(failed_request, FakeAdapter) == expected_response
+      assert HttpClient.get(FakeAdapter, "path", [{:http_client, HttpClientError}]) ==
+               expected_response
     end
-  end
 
-  describe "get/3" do
     test "If an empty base_uri is set, raise an error" do
       path = "/path"
 
