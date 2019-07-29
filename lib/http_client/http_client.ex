@@ -77,7 +77,7 @@ defmodule ElixirTools.HttpClient do
   defp ensure_valid_uri!(uri), do: uri
 
   @spec do_request(fun(), adapter, [post_opt]) :: {:ok, response_body} | {:error, term}
-  def do_request(request, adapter, opts \\ []) do
+  defp do_request(request, adapter, opts) do
     headers_to_add = opts[:headers_to_add] || []
     headers = opts[:headers] || default_headers()
     headers = headers_to_add ++ headers

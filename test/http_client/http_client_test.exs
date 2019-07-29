@@ -48,41 +48,77 @@ defmodule ElixirTools.HttpClientTest do
     end
   end
 
-  describe "do_request/2" do
+  describe "get/3" do
     test "it correctly processes empty responses" do
-      empty_request = fn _headers, _connection_options ->
+      defmodule HttpClientEmpty do
+        use ElixirTools.ContractImpl, module: HTTPoison
+
+        @impl true
+        def get(_, _, _) do
+          {:ok,
+           %HTTPoison.Response{
+             body: "",
+             headers: [],
+             request_url: "test",
+             status_code: 200
+           }}
+        end
+      end
+
+      expected_response =
         {:ok,
          %HTTPoison.Response{
            body: "",
            headers: [],
+           request: nil,
            request_url: "test",
            status_code: 200
          }}
-      end
 
-      assert {:ok, %{body: ""}} = HttpClient.do_request(empty_request, FakeAdapter)
+      assert HttpClient.get(FakeAdapter, "path", [{:http_client, HttpClientEmpty}]) ==
+               expected_response
     end
 
     test "when provider returns a reply that is not json" do
-      expected_message = "Invalid JSON returned from provider. Given: \"invalid_json}\""
+      defmodule HttpClientNotJson do
+        use ElixirTools.ContractImpl, module: HTTPoison
 
-      empty_request = fn _headers, _connection_options ->
-        {:ok,
-         %HTTPoison.Response{
-           body: "invalid_json}",
-           headers: [],
-           request_url: "test",
-           status_code: 200
-         }}
+        @impl true
+        def get(_, _, _) do
+          {:ok,
+           %HTTPoison.Response{
+             body: "invalid_json}",
+             headers: [],
+             request_url: "test",
+             status_code: 200
+           }}
+        end
       end
 
+      expected_message = "Invalid JSON returned from provider. Given: \"invalid_json}\""
+
       assert_raise(RuntimeError, expected_message, fn ->
-        HttpClient.do_request(empty_request, FakeAdapter)
+        assert HttpClient.get(FakeAdapter, "path", [{:http_client, HttpClientNotJson}])
       end)
     end
 
     test "If a legit JSON is returned, parse and return the json in the body" do
-      valid_response =
+      defmodule HttpClientValid do
+        use ElixirTools.ContractImpl, module: HTTPoison
+
+        @impl true
+        def get(_, _, _) do
+          {:ok,
+           %HTTPoison.Response{
+             body: ~s[{"test": "valid_json"}],
+             headers: [],
+             request_url: "test",
+             status_code: 200
+           }}
+        end
+      end
+
+      expected_response =
         {:ok,
          %HTTPoison.Response{
            body: %{"test" => "valid_json"},
@@ -91,29 +127,24 @@ defmodule ElixirTools.HttpClientTest do
            status_code: 200
          }}
 
-      request = fn _headers, _connection_options ->
-        {:ok,
-         %HTTPoison.Response{
-           body: ~s[{"test": "valid_json"}],
-           headers: [],
-           request_url: "test",
-           status_code: 200
-         }}
-      end
-
-      assert HttpClient.do_request(request, FakeAdapter) == valid_response
+      assert HttpClient.get(FakeAdapter, "path", [{:http_client, HttpClientValid}]) ==
+               expected_response
     end
 
     test "if the request reaches a timeout return a timeout error tuple" do
-      timeout_request = fn _headers, _connection_options ->
-        {:error, %HTTPoison.Error{reason: :timeout}}
+      defmodule HttpClientTimeout do
+        use ElixirTools.ContractImpl, module: HTTPoison
+
+        @impl true
+        def get(_, _, _), do: {:error, %HTTPoison.Error{reason: :timeout}}
       end
 
-      assert HttpClient.do_request(timeout_request, FakeAdapter) == {:error, :http_timeout}
-    end
-  end
+      expected_response = {:error, :http_timeout}
 
-  describe "get/3" do
+      assert HttpClient.get(FakeAdapter, "path", [{:http_client, HttpClientTimeout}]) ==
+               expected_response
+    end
+
     test "If connection is closed, retry once and return the http client response" do
       defmodule HttpClientClosed do
         use ElixirTools.ContractImpl, module: HTTPoison
