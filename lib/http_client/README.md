@@ -12,3 +12,14 @@ config :pagantis_elixir_tools, PgIssuing.Http.Client,
   response_timeout: "1000" # required
   http_client: HTTPoison # optional, default: HTTPoison
 ```
+
+## Usage
+Client has to create `adapter` for a specific provider with implemented function `base_uri()`. 
+
+This module shoud use `@behaviour PgIssuing.HttpClient.Adapter`
+
+To do http request you add to your code the following code
+
+```elixir
+HttpClient.post(YourAdapterModule, "path/to/endpoint", "{\"param\":\"value\"}")
+```
