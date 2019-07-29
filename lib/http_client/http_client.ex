@@ -103,10 +103,6 @@ defmodule ElixirTools.HttpClient do
     end
   end
 
-  @spec get_status_code(any) :: pos_integer | nil
-  def get_status_code({_, %{status_code: status_code}}), do: status_code
-  def get_status_code(_), do: nil
-
   @spec handle_do_request_response(http_poison_response :: map) ::
           {:ok, http_poison_response :: map}
   defp handle_do_request_response(%{body: ""} = response), do: {:ok, response}

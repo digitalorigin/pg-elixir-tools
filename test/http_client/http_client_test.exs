@@ -48,16 +48,6 @@ defmodule ElixirTools.HttpClientTest do
     end
   end
 
-  describe "get_status_code/1" do
-    test "If the correct input parameters are supplied, the status code is extracted and returned" do
-      assert HttpClient.get_status_code({nil, %{status_code: 200}}) == 200
-    end
-
-    test "If invalid input parameters are supplied, `nil` is returned" do
-      assert HttpClient.get_status_code({nil, %{}}) == nil
-    end
-  end
-
   describe "do_request/2" do
     test "it correctly processes empty responses" do
       empty_request = fn _headers, _connection_options ->
