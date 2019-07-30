@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.11.0 (2019-07-30)
+* add `HttpClient` - a wrapper around more basic Http Client(HTTPoison by default)
+
 ## 0.10.1 (2019-07-22)
 * add optional `occurred_at` to Events. 
 It's an optional part used for to fill `occurred_at` field. If it's not provided, `current time` will be sent.
