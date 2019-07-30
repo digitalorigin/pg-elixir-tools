@@ -8,3 +8,5 @@ config :pagantis_elixir_tools, ElixirTools.Metrix,
   adapter: ElixirTools.Metrix.Adapters.Log
 
 config :pagantis_elixir_tools, ElixirTools.Schema, default_repo: Support.TestRepo
+
+config :pagantis_elixir_tools, ElixirTools.HttpClient, response_timeout: 1500

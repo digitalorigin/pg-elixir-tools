@@ -50,7 +50,8 @@ defmodule ElixirTools.MixProject do
       {:jason, "~> 1.1"},
       {:ja_serializer, "~> 0.14"},
       {:ecto_sql, "~> 3.0"},
-      {:statix, ">= 0.0.0"}
+      {:statix, ">= 0.0.0"},
+      {:httpoison, "~> 1.4"}
     ]
   end
 
