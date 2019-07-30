@@ -36,7 +36,7 @@ defmodule ElixirTools.HttpClient do
       http_client.post(uri, request_body, headers, connection_options)
     end
 
-    do_request(post_request, adapter, opts)
+    do_request(post_request, opts)
   end
 
   @spec put(adapter, path, request_body, [put_opt]) :: {:ok, response_body} | {:error, term}
@@ -48,7 +48,7 @@ defmodule ElixirTools.HttpClient do
       http_client.put(uri, request_body, headers, connection_options)
     end
 
-    do_request(put_request, adapter, opts)
+    do_request(put_request, opts)
   end
 
   @spec get(adapter, path, [post_opt]) :: {:ok, response_body} | {:error, term}
@@ -60,7 +60,7 @@ defmodule ElixirTools.HttpClient do
       http_client.get(uri, headers, connection_options)
     end
 
-    do_request(get_request, adapter, opts)
+    do_request(get_request, opts)
   end
 
   @spec build_uri(base_uri, path) :: uri | no_return
@@ -76,8 +76,8 @@ defmodule ElixirTools.HttpClient do
 
   defp ensure_valid_uri!(uri), do: uri
 
-  @spec do_request(fun(), adapter, [post_opt]) :: {:ok, response_body} | {:error, term}
-  defp do_request(request, adapter, opts) do
+  @spec do_request(fun(), [post_opt]) :: {:ok, response_body} | {:error, term}
+  defp do_request(request, opts) do
     headers_to_add = opts[:headers_to_add] || []
     headers = opts[:headers] || default_headers()
     headers = headers_to_add ++ headers
@@ -95,7 +95,7 @@ defmodule ElixirTools.HttpClient do
         if opts[:retry_closed] do
           response
         else
-          do_request(request, adapter, [{:retry_closed, true} | opts])
+          do_request(request, [{:retry_closed, true} | opts])
         end
 
       {:error, %HTTPoison.Error{}} = error_response ->
