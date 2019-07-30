@@ -8,7 +8,7 @@ are to be written by the application.
 Setup a default config in your application:
 
 ```elixir
-config :pagantis_elixir_tools, PgIssuing.Http.Client,
+config :pagantis_elixir_tools, ElixirTools.HttpClient,
   response_timeout: "1000" # required
   http_client: HTTPoison # optional, default: HTTPoison
 ```
