@@ -16,7 +16,7 @@ config :pagantis_elixir_tools, ElixirTools.HttpClient,
 ## Usage
 Client has to create `adapter` for a specific provider with implemented function `base_uri()`. 
 
-This module should use `@behaviour PgIssuing.HttpClient.Adapter`
+This module should use `@behaviour ElixirTools.HttpClient.Adapter`
 
 To do http request you add to your code the following code
 
