@@ -9,14 +9,14 @@ Setup a default config in your application:
 
 ```elixir
 config :pagantis_elixir_tools, ElixirTools.HttpClient,
-  response_timeout: "1000" # required
+  response_timeout: 1000 # in ms, required
   http_client: HTTPoison # optional, default: HTTPoison
 ```
 
 ## Usage
 Client has to create `adapter` for a specific provider with implemented function `base_uri()`. 
 
-This module shoud use `@behaviour PgIssuing.HttpClient.Adapter`
+This module should use `@behaviour PgIssuing.HttpClient.Adapter`
 
 To do http request you add to your code the following code
 
