@@ -47,7 +47,7 @@ defmodule ElixirTools.Events.EventHandler do
   def publish(event, opts) do
     task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
 
-    task_supervisor_module.async_nolink(PgPayments.TaskSupervisor, fn ->
+    task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
       publish_event_call(event, opts)
     end)
 
