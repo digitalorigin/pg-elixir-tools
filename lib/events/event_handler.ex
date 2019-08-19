@@ -6,6 +6,7 @@ defmodule ElixirTools.Events.EventHandler do
           | {:task_supervisor_module, module}
           | {:event_module, module}
           | {:not_sent_event_module, module}
+          | {:telemetry_module, module}
   @callback send_event(any, [events_opt]) :: :ok
 
   @callback create(event_name, payload) :: Event.t()
@@ -57,11 +58,14 @@ defmodule ElixirTools.Events.EventHandler do
   def publish_event_call(event, opts) do
     event_module = opts[:event_module] || Event
     not_sent_event_module = opts[:not_sent_event_module] || NotSentEvent
+    telemetry_module = opts[:telemetry_module] || :telemetry
 
     case event_module.publish(event) do
       {:error, reason} ->
         error_info = event |> Map.from_struct() |> Map.put(:reason, inspect(reason))
-        :telemetry.execute([:do_elixir_tools, :events, :not_sent], %{error_info: error_info})
+
+        telemetry_module.execute([:do_elixir_tools, :events, :not_sent], %{error_info: error_info})
+
         not_sent_event_module.create!(%{content: Jason.encode!(error_info)})
         :error
 

@@ -97,6 +97,12 @@ defmodule ElixirTools.Events.EventHandlerTest do
       end
     end
 
+    defmodule TelemetryFake do
+      def execute(event_name, measurements) do
+        send(self(), {:telemetry_execute, %{event_name: event_name, measurements: measurements}})
+      end
+    end
+
     test "event is published as expected", %{event: event} do
       opts = [{:task_supervisor_module, TaskSupervisorFake}, {:event_module, EventFakeOk}]
 
@@ -107,19 +113,39 @@ defmodule ElixirTools.Events.EventHandlerTest do
     end
 
     test "event publishing call returns error", %{event: event} do
-      opts = [{:task_supervisor_module, TaskSupervisorFake}, {:event_module, EventFakeFail}]
+      opts = [
+        {:task_supervisor_module, TaskSupervisorFake},
+        {:event_module, EventFakeFail},
+        {:telemetry_module, TelemetryFake}
+      ]
 
       assert :ok == EventHandler.publish(event, opts)
 
       assert_received(:start)
-
       assert_received({:publish, ^event})
+    end
+
+    test "if event not publish telemtry metric is sent", %{event: event} do
+      opts = [
+        {:task_supervisor_module, TaskSupervisorFake},
+        {:event_module, EventFakeFail},
+        {:telemetry_module, TelemetryFake}
+      ]
+
+      assert :ok == EventHandler.publish(event, opts)
 
       expected_reason =
         "%RuntimeError{message: \"sns not supported in region eu-north-1 for partition aws\"}"
 
-      expected_response_data = event |> Map.from_struct() |> Map.put(:reason, expected_reason)
-      # TEST TELEMETRY CALL HERE
+      expected_error_info = event |> Map.from_struct() |> Map.put(:reason, expected_reason)
+
+      assert_received(
+        {:telemetry_execute,
+         %{
+           event_name: [:do_elixir_tools, :events, :not_sent],
+           measurements: %{error_info: ^expected_error_info}
+         }}
+      )
     end
 
     test "save event to DB if it was not published", %{event: event} do
