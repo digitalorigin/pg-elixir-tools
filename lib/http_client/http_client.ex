@@ -23,7 +23,7 @@ defmodule ElixirTools.HttpClient do
   @type action :: :get | :create | :update
   @type adapter :: module
 
-  @default_response_timeout 10000
+  @default_response_timeout 10_000
 
   @spec post(adapter, path, request_body, [post_opt]) :: {:ok, response_body} | {:error, term}
   def post(adapter, path, request_body, opts \\ []) do
