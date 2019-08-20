@@ -119,10 +119,12 @@ defmodule ElixirTools.HttpClient do
     ]
   end
 
+  @spec http_client() :: module
   defp http_client() do
     Application.get_env(:pagantis_elixir_tools, HttpClient)[:http_client] || HTTPoison
   end
 
+  @spec default_connection_options() :: [recv_timeout: pos_integer]
   defp default_connection_options() do
     timeout = Application.get_env(:pagantis_elixir_tools, HttpClient)[:response_timeout]
     [recv_timeout: timeout]
