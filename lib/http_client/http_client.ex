@@ -22,15 +22,10 @@ defmodule ElixirTools.HttpClient do
   @type action :: :get | :create | :update
   @type adapter :: module
 
-  # credo:disable-for-next-line CredoEnvvar.Check.Warning.EnvironmentVariablesAtCompileTime
-  @client_env Application.get_env(:pagantis_elixir_tools, HttpClient)
-  @http_client @client_env[:http_client] || HTTPoison
-  @default_connection_options [recv_timeout: @client_env[:response_timeout]]
-
   @spec post(adapter, path, request_body, [post_opt]) :: {:ok, response_body} | {:error, term}
   def post(adapter, path, request_body, opts \\ []) do
     uri = build_uri(adapter.base_uri(), path)
-    http_client = opts[:http_client] || @http_client
+    http_client = opts[:http_client] || http_client()
 
     post_request = fn headers, connection_options ->
       http_client.post(uri, request_body, headers, connection_options)
@@ -42,7 +37,7 @@ defmodule ElixirTools.HttpClient do
   @spec put(adapter, path, request_body, [put_opt]) :: {:ok, response_body} | {:error, term}
   def put(adapter, path, request_body, opts \\ []) do
     uri = build_uri(adapter.base_uri(), path)
-    http_client = opts[:http_client] || @http_client
+    http_client = opts[:http_client] || http_client()
 
     put_request = fn headers, connection_options ->
       http_client.put(uri, request_body, headers, connection_options)
@@ -54,7 +49,7 @@ defmodule ElixirTools.HttpClient do
   @spec get(adapter, path, [post_opt]) :: {:ok, response_body} | {:error, term}
   def get(adapter, path, opts \\ []) do
     uri = build_uri(adapter.base_uri(), path)
-    http_client = opts[:http_client] || @http_client
+    http_client = opts[:http_client] || http_client()
 
     get_request = fn headers, connection_options ->
       http_client.get(uri, headers, connection_options)
@@ -82,7 +77,7 @@ defmodule ElixirTools.HttpClient do
     headers = opts[:headers] || default_headers()
     headers = headers_to_add ++ headers
 
-    connection_options = @default_connection_options
+    connection_options = default_connection_options()
 
     case request.(headers, connection_options) do
       {:ok, response} ->
@@ -122,5 +117,14 @@ defmodule ElixirTools.HttpClient do
     [
       {"Content-Type", "application/json"}
     ]
+  end
+
+  defp http_client() do
+    Application.get_env(:pagantis_elixir_tools, HttpClient)[:http_client] || HTTPoison
+  end
+
+  defp default_connection_options() do
+    timeout = Application.get_env(:pagantis_elixir_tools, HttpClient)[:response_timeout]
+    [recv_timeout: timeout]
   end
 end
