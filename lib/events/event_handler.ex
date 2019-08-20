@@ -64,7 +64,10 @@ defmodule ElixirTools.Events.EventHandler do
       {:error, reason} ->
         error_info = event |> Map.from_struct() |> Map.put(:reason, inspect(reason))
 
-        telemetry_module.execute([:do_elixir_tools, :events, :not_sent], %{error_info: error_info})
+        telemetry_module.execute(
+          [:pagantis_elixir_tools, :events, :not_sent],
+          %{error_info: error_info}
+        )
 
         not_sent_event_module.create!(%{content: Jason.encode!(error_info)})
         :error

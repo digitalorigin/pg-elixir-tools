@@ -27,8 +27,8 @@ defmodule ElixirTools.Events.EventHandlerTest do
       event_name = "CHARGE_CREATED"
       event_id_seed = "22833003-fb25-4961-8373-f01da28ec820"
 
-      assert event == EventHandler.create(event_name, payload, event_id_seed)
-      assert :ok == Event.validate(event)
+      assert EventHandler.create(event_name, payload, event_id_seed) == event
+      assert Event.validate(event) == :ok
     end
   end
 
@@ -45,11 +45,8 @@ defmodule ElixirTools.Events.EventHandlerTest do
       ]
 
       event = %{event | event_id_seed_optional: event_id_seed_optional, occurred_at: occurred_at}
-
-      assert event ==
-               EventHandler.create(event_name, payload, event_id_seed, optional_params)
-
-      assert :ok == Event.validate(event)
+      assert EventHandler.create(event_name, payload, event_id_seed, optional_params) == event
+      assert Event.validate(event) == :ok
     end
 
     test "if event_id_seed_optional is nil - it's replaced with empty string", %{payload: payload} do
@@ -106,7 +103,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
     test "event is published as expected", %{event: event} do
       opts = [{:task_supervisor_module, TaskSupervisorFake}, {:event_module, EventFakeOk}]
 
-      assert :ok == EventHandler.publish(event, opts)
+      assert EventHandler.publish(event, opts) == :ok
 
       assert_received(:start)
       assert_received({:publish, ^event})
@@ -119,7 +116,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
         {:telemetry_module, TelemetryFake}
       ]
 
-      assert :ok == EventHandler.publish(event, opts)
+      assert EventHandler.publish(event, opts) == :ok
 
       assert_received(:start)
       assert_received({:publish, ^event})
@@ -132,7 +129,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
         {:telemetry_module, TelemetryFake}
       ]
 
-      assert :ok == EventHandler.publish(event, opts)
+      assert EventHandler.publish(event, opts) == :ok
 
       expected_reason =
         "%RuntimeError{message: \"sns not supported in region eu-north-1 for partition aws\"}"
@@ -142,7 +139,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
       assert_received(
         {:telemetry_execute,
          %{
-           event_name: [:do_elixir_tools, :events, :not_sent],
+           event_name: [:pagantis_elixir_tools, :events, :not_sent],
            measurements: %{error_info: ^expected_error_info}
          }}
       )
@@ -163,7 +160,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
         {:not_sent_event_module, FakeNotSentEvent}
       ]
 
-      assert :ok == EventHandler.publish(event, opts)
+      assert EventHandler.publish(event, opts) == :ok
 
       assert_received(
         {:create_not_sent_event,

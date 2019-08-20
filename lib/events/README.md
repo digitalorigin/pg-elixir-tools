@@ -77,4 +77,4 @@ An example can be found here [https://github.com/digitalorigin/pg-elixir-tools/t
 
 In case if event was not sent:
 * new row will be added to `not_sent_events` table
-* telemetry metric will be emitted with the following data `[:do_elixir_tools, :events, :not_sent], %{error_info: error_info}`. So you can attach to it with Rollbar/Logger
+* telemetry metric will be emitted with the following data `[:pagantis_elixir_tools, :events, :not_sent], %{error_info: error_info}`. So you can attach to it with Rollbar/Logger
