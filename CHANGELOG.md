@@ -13,4 +13,4 @@ It's an optional part used for `event_id` UUID5 generation. By default - `""`(em
 
 ## 0.12.0 (2019-08-21)
 * Added the integer helper logic
-* HTTPConnector now allows integers to be passed as string
+* HTTPClient now allows integers to be passed as string
