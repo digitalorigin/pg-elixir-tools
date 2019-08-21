@@ -5,6 +5,7 @@ defmodule ElixirTools.HttpClient do
   require Logger
 
   alias __MODULE__
+  alias ElixirTools.IntegerHelper
 
   @type post_opt ::
           {:headers, [header]}
@@ -21,6 +22,8 @@ defmodule ElixirTools.HttpClient do
   @type base_uri :: String.t()
   @type action :: :get | :create | :update
   @type adapter :: module
+
+  @default_response_timeout 10_000
 
   @spec post(adapter, path, request_body, [post_opt]) :: {:ok, response_body} | {:error, term}
   def post(adapter, path, request_body, opts \\ []) do
@@ -126,7 +129,11 @@ defmodule ElixirTools.HttpClient do
 
   @spec default_connection_options() :: [recv_timeout: pos_integer]
   defp default_connection_options() do
-    timeout = Application.get_env(:pagantis_elixir_tools, HttpClient)[:response_timeout]
+    config_timeout = Application.get_env(:pagantis_elixir_tools, HttpClient)[:response_timeout]
+
+    timeout =
+      IntegerHelper.ensure_integer("response_timeout", config_timeout, @default_response_timeout)
+
     [recv_timeout: timeout]
   end
 end

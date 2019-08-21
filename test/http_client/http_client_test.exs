@@ -1,6 +1,8 @@
 defmodule ElixirTools.HttpClientTest do
   use ExUnit.Case
 
+  import ExUnit.CaptureLog
+
   alias ElixirTools.HttpClient
 
   defmodule FakeAdapter do
@@ -347,5 +349,24 @@ defmodule ElixirTools.HttpClientTest do
       {:ok, response} = HttpClient.put(FakeAdapter, url, body, http_client: FakeHttpClient)
       assert response.body == %{"foo" => "bar"}
     end
+  end
+
+  test "when the http_timeout is not set correctly, it warns and returns the default" do
+    original_config = Application.get_env(:pagantis_elixir_tools, ElixirTools.HttpClient)
+
+    on_exit(fn ->
+      Application.put_env(:pagantis_elixir_tools, ElixirTools.HttpClient, original_config)
+    end)
+
+    Application.put_env(
+      :pagantis_elixir_tools,
+      ElixirTools.HttpClient,
+      Keyword.delete(original_config, :response_timeout)
+    )
+
+    log =
+      capture_log(fn -> HttpClient.get(FakeAdapter, "path", [{:http_client, FakeHttpClient}]) end)
+
+    assert log =~ "nil is not valid for response_timeout. Using default 1000"
   end
 end
