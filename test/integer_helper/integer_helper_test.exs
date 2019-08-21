@@ -5,6 +5,12 @@ defmodule ElixirTools.IntegerHelperTest do
 
   alias ElixirTools.IntegerHelper
 
+  defmodule FakeTelemetry do
+    def execute(key, event) do
+      send(self(), {:telemetry_execute, [key, event]})
+    end
+  end
+
   describe "ensure_integer/3" do
     setup do
       %{default_value: -1}
@@ -37,6 +43,20 @@ defmodule ElixirTools.IntegerHelperTest do
 
         assert log =~ "#{inspect(value)} is not valid for my_key"
       end
+    end
+
+    test "sends telemetry metric when value is not parsable to integer", context do
+      key = "my_key"
+      value = :not_integer
+
+      IntegerHelper.ensure_integer(key, value, context.default_value,
+        telemetry_module: FakeTelemetry
+      )
+
+      expected_key = [:pagantis_elixir_tools, :ensure_integer, :not_valid]
+      expected_event = %{error_info: ":not_integer is not valid for my_key. Using default -1"}
+
+      assert_received({:telemetry_execute, [^expected_key, ^expected_event]})
     end
 
     test "when default nor value is an integer, raise an error" do
