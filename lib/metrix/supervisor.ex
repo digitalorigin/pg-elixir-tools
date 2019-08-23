@@ -9,6 +9,7 @@ defmodule ElixirTools.Metrix.Supervisor do
                        :recurrent_metrics
                      ]
 
+  @spec start_link(any) :: {:ok, pid} | {:error, term}
   def start_link(_ \\ []) do
     Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
   end
