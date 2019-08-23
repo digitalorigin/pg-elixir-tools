@@ -1,7 +1,7 @@
 defmodule ElixirTools.Events.NotSentEvent do
   @moduledoc """
-      Schema used for saving not sent (due to a failure) events to DB.
-      They supposed to be resend later, after this a field `is_sent` has to be set to `true`
+  Schema used for saving not sent (due to a failure) events to DB.
+  They supposed to be resend later, after this a field `is_sent` has to be set to `true`
   """
 
   use ElixirTools.Schema
