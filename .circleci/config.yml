@@ -69,3 +69,15 @@ jobs:
               exit $score
             fi
             exit 0
+
+      - run:
+          name: Check if all specs are in place
+          command: |
+            set +e
+            max_credo_score=0
+            mix credo -C check_specs
+            score=$?
+            if [ $score -gt $max_credo_score ]; then
+              exit $score
+            fi
+            exit 0
