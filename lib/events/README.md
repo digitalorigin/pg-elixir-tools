@@ -27,6 +27,29 @@ config :pagantis_elixir_tools, ElixirTools.Events,
   }
 ```
 
+Add
+```elixir
+supervisor(Task.Supervisor, [[name: ElixirTools.TaskSupervisor]])
+```
+to your `application.ex`. It's needed to be able to sent event async.
+
+Events which are failed to sent(wrong config, infrastructure issues etc.) will be save to `not_sent_events` table. 
+To create this table
+```bash
+mix ecto.gen.migration create_not_sent_events
+```
+
+and add the following to the migration file inside the `change` function
+```elixir
+create table(:not_sent_events, primary_key: false) do
+  add(:id, :uuid, primary_key: true)
+  add(:content, :text)
+  add(:is_sent, :boolean, default: false)
+  timestamps()
+end
+```
+
+
 For local development with localstack, also add:
 
 ```elixir
@@ -39,15 +62,19 @@ config :ex_aws, :sns,
 
 ## Usage
 ```elixir
+EventHandler.create(name, payload, event_id_seed, [{:event_id_seed_optional, event_id_seed_optional}, {:occurred_at, occurred_at}])
 Event.publish(%Event{name: "NAME_EXAMPLE", event_id_seed: "f367d382-6452-435c-ad83-3477bd530349", payload: %{key: "value"}, version: "1.0.0"}
 ```
 Where:
 * `name` - obligatory, string, contains at least one `_`
+* `payload` - optional, map
 * `event_id_seed` - obligatory, string in UUID format, which will be used together with `name`, `version` & `event_id_seed_optional` as a seed for event_id generation. 
 If all values will be the same -> event_id will be the same -> event will be updated in S3.
 * `event_id_seed_optional` - string, optional part used for event_id generation. By default - ""(empty string)
 * `occurred_at` - optional, datetime, if provided - overwrite `current datetime` sent by default
-* `payload` - optional, map
-* `version` - optional, string, `\d+.\d+.\d+` format
 
 An example can be found here [https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events](https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events).
+
+In case if event was not sent:
+* new row will be added to `not_sent_events` table
+* telemetry metric will be emitted with the following data `[:pagantis_elixir_tools, :events, :not_sent], %{error_info: error_info}`. So you can attach to it with Rollbar/Logger
