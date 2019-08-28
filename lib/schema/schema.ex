@@ -6,8 +6,9 @@ defmodule ElixirTools.Schema do
 
   @type id :: Ecto.UUID.t()
 
-  @default_repo Application.get_env(:pagantis_elixir_tools, ElixirTools.Schema)[:default_repo]
-  def default_repo, do: @default_repo
+  def default_repo do
+    Application.get_env(:pagantis_elixir_tools, ElixirTools.Schema)[:default_repo]
+  end
 
   # Required methods in schemas
   @callback changeset(map) :: Changeset.t()
