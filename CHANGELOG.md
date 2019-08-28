@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.1 (2019-08-28)
+* `ElixirTools.Schema` now reads the `default_repo` at runtime, not at compile time. This prevents
+the bug where repo is stuck at the value `nil`.
+
 ## 0.13.0 (2019-08-23)
 * Add `event_handler` for async event sending
 * Add `not_send_events` for saving not sent events to DB
