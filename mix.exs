@@ -1,8 +1,8 @@
 defmodule ElixirTools.MixProject do
   use Mix.Project
 
-  @version "0.12.0"
-  @description "Tools used in pagantis for making developing easier"
+  @version "0.13.0"
+  @description "Tools used in Pagantis for making developing easier"
 
   def project do
     [
