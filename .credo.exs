@@ -9,6 +9,14 @@
   # You can have as many configs as you like in the `configs:` field.
   configs: [
     %{
+      name: "check_specs",
+      requires: [],
+      strict: true,
+      color: true,
+      files: %{included: ["lib/"], excluded: ["test/"]},
+      checks: [{Credo.Check.Readability.Specs}]
+    },
+    %{
       #
       # Run any exec using `mix credo -C <name>`. If no exec name is given
       # "default" is used.

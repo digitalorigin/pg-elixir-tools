@@ -36,12 +36,12 @@ defmodule ElixirTools.ContractImpl do
   end
 
   @no_module_error "There was no module specified."
-  @spec arg_to_module(any) :: module | no_return()
+  @spec arg_to_module!(any) :: module | no_return()
   def arg_to_module!({_, _, module_param}) do
     module_param
     |> Enum.reduce("Elixir", &"#{&2}.#{to_string(&1)}")
     |> String.to_atom()
   end
 
-  def arg_to_module(_), do: raise(@no_module_error)
+  def arg_to_module!(_), do: raise(@no_module_error)
 end
