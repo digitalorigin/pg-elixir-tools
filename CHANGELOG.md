@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.2 (2019-09-09)
+* Bump ecto_sql from 3.1.6 to 3.2.0
+* Bump phoenix from 1.4.9 to 1.4.10
+* Bump credo from 1.1.3 to 1.1.4
+* Bump ex_doc from 0.21.1 to 0.21.2
+
 ## 0.13.1 (2019-08-28)
 * `ElixirTools.Schema` now reads the `default_repo` at runtime, not at compile time. This prevents
 the bug where repo is stuck at the value `nil`.
