@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.14.0 (2019-08-28)
+* Add optional parameter `file_extension` to `ElixirTools.Fixture.load!` for loading non-json files
+
 ## 0.13.1 (2019-08-28)
 * `ElixirTools.Schema` now reads the `default_repo` at runtime, not at compile time. This prevents
 the bug where repo is stuck at the value `nil`.
