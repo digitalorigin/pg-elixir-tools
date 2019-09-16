@@ -18,9 +18,9 @@ defmodule ElixirTools.Fixture do
   @doc """
   Looks for a fixture without decoding
   """
-  @spec load!(String.t(), String.t()) :: String.t()
-  def load!(fixture, location \\ @fixture_location) do
-    file = location <> fixture <> ".json"
+  @spec load!(String.t(), String.t(), String.t()) :: String.t()
+  def load!(fixture, location \\ @fixture_location, file_extension \\ ".json") do
+    file = location <> fixture <> file_extension
     file |> File.read!()
   end
 end
