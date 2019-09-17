@@ -63,8 +63,7 @@ defmodule ElixirTools.Metrix do
   @spec to_tags(Adapter.tag_map(), [opts]) :: any
   def to_tags(tags, opts) do
     adapter_module = opts[:adapter_module] || @adapter
-    default_tags = Application.get_env(:pagantis_elixir_tools, Metrix)[:default_tags]
-
+    default_tags = Application.get_env(:pagantis_elixir_tools, Metrix)[:default_tags] || %{}
     adapter_module.to_tags(Map.merge(tags, default_tags))
   end
 
