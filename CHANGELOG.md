@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.14.1 (2019-09-17)
+* Metrix: default tags are no longer mandatory
+
 ## 0.14.0 (2019-08-28)
 * Add optional parameter `file_extension` to `ElixirTools.Fixture.load!` for loading non-json files
 
