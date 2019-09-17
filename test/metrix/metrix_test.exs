@@ -132,6 +132,27 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
     end
   end
 
+  describe "to_tags/1" do
+    setup do
+      original_config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Metrix)
+
+      on_exit(fn ->
+        Application.put_env(:pagantis_elixir_tools, ElixirTools.Metrix, original_config)
+      end)
+    end
+
+    test "when no tags are set in the config" do
+      config_no_tags =
+        :pagantis_elixir_tools
+        |> Application.get_env(ElixirTools.Metrix)
+        |> Keyword.delete_first(:default_tags)
+
+      Application.put_env(:pagantis_elixir_tools, ElixirTools.Metrix, config_no_tags)
+
+      assert ElixirTools.Metrix.to_tags(%{}, adapter_module: FailAdapter) == %{}
+    end
+  end
+
   defp await_execution() do
     :sys.get_state(ElixirTools.Metrix)
   end
