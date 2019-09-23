@@ -18,21 +18,23 @@ jobs:
           name: Install Hex locally
           command: mix local.hex --force
 
+      - run: echo "$CACHE_VERSION" > _tmp_cache_version
       - restore_cache:
           keys:
-            - v2-mix-deps-{{ .Branch }}
-            - v2-mix-deps-master
+            - deps-dir-cache-{{ checksum "_tmp_cache_version" }}-{{ .Branch }}
+            - deps-dir-cache-{{ checksum "_tmp_cache_version" }}-master
 
       - restore_cache:
           keys:
-            - v1-build-{{ .Branch }}
-            - v1-build-master
+            - build-dir-cache-{{ checksum "_tmp_cache_version" }}-{{ .Branch }}
+            - build-dir-cache-{{ checksum "_tmp_cache_version" }}-master
+
       - run:
           name: Fetch dependencies and compile
           command: MIX_ENV=prod mix do deps.get, compile --warnings-as-errors
 
       - save_cache:
-          key: v2-mix-deps-{{ .Branch }}-{{ epoch }}
+          key: deps-dir-cache-{{ checksum "_tmp_cache_version" }}-{{ .Branch }}-{{ epoch}}
           paths:
             - deps
 
@@ -54,7 +56,7 @@ jobs:
           command:  mix dialyzer --halt-exit-status || exit 1
 
       - save_cache:
-          key: v1-build-{{ .Branch }}-{{ epoch }}
+          key: build-dir-cache-{{ checksum "_tmp_cache_version" }}-{{ .Branch }}-{{epoch}}
           paths:
             - _build
 
