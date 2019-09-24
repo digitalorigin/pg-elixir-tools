@@ -2,7 +2,9 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
   use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
+  import ElixirTools.MetrixHelper
 
+  alias ElixirTools.Metrix
   alias ElixirTools.Metrix.Adapters
 
   defmodule FailAdapter do
@@ -17,6 +19,8 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
       tags
     end
   end
+
+  setup :start_supervisor
 
   setup do
     Logger.configure(level: :debug)
@@ -88,8 +92,7 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
         end
       end
 
-      log_message =
-        capture_log(fn -> ElixirTools.Metrix.init(adapter_module: CrashAdapter, sleep_ms: 1) end)
+      log_message = capture_log(fn -> Metrix.init(adapter_module: CrashAdapter, sleep_ms: 1) end)
 
       assert log_message =~
                "Could not connect to adapter: %RuntimeError{message: \"foo\"}. Retry in 1 ms"
@@ -102,10 +105,7 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
 
       log_message =
         capture_log(fn ->
-          GenServer.cast(
-            ElixirTools.Metrix,
-            {:send_metric, :increment, args, adapter_module: Adapters.Log}
-          )
+          GenServer.cast(Metrix, {:send_metric, :increment, args, adapter_module: Adapters.Log})
 
           await_execution()
         end)
@@ -119,10 +119,7 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
 
       log_message =
         capture_log(fn ->
-          GenServer.cast(
-            ElixirTools.Metrix,
-            {:send_metric, :increment, args, adapter_module: FailAdapter}
-          )
+          GenServer.cast(Metrix, {:send_metric, :increment, args, adapter_module: FailAdapter})
 
           await_execution()
         end)
@@ -133,27 +130,19 @@ defmodule ElixirTools.Metrix.ElixirTools.MetrixTest do
   end
 
   describe "to_tags/1" do
-    setup do
-      original_config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Metrix)
-
-      on_exit(fn ->
-        Application.put_env(:pagantis_elixir_tools, ElixirTools.Metrix, original_config)
-      end)
-    end
-
     test "when no tags are set in the config" do
       config_no_tags =
         :pagantis_elixir_tools
-        |> Application.get_env(ElixirTools.Metrix)
+        |> Application.get_env(Metrix)
         |> Keyword.delete_first(:default_tags)
 
-      Application.put_env(:pagantis_elixir_tools, ElixirTools.Metrix, config_no_tags)
+      Application.put_env(:pagantis_elixir_tools, Metrix, config_no_tags)
 
-      assert ElixirTools.Metrix.to_tags(%{}, adapter_module: FailAdapter) == %{}
+      assert Metrix.to_tags(%{}, adapter_module: FailAdapter) == %{}
     end
   end
 
   defp await_execution() do
-    :sys.get_state(ElixirTools.Metrix)
+    :sys.get_state(Metrix)
   end
 end

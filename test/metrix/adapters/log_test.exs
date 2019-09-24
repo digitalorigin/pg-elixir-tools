@@ -2,11 +2,16 @@ defmodule ElixirTools.Metrix.Adapters.LogTest do
   use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
+  import ElixirTools.MetrixHelper
 
+  alias ElixirTools.Metrix
   alias ElixirTools.Metrix.Adapters.Log
+
+  setup :start_supervisor
 
   setup do
     Logger.configure(level: :debug)
+    :ok
   end
 
   test "connect" do
@@ -16,7 +21,7 @@ defmodule ElixirTools.Metrix.Adapters.LogTest do
 
   @methods ~w(count increment decrement gauge histogram timing)
   Enum.each(@methods, fn method_name ->
-    test "#{method_name} logs the correct message through ElixirTools.Metrix" do
+    test "#{method_name} logs the correct message through Metrix" do
       method = String.to_atom(unquote(method_name))
       metric = "my_metric"
       value = "my_value"
@@ -25,8 +30,8 @@ defmodule ElixirTools.Metrix.Adapters.LogTest do
 
       log_message =
         capture_log(fn ->
-          apply(ElixirTools.Metrix, method, args)
-          :sys.get_state(ElixirTools.Metrix)
+          apply(Metrix, method, args)
+          :sys.get_state(Metrix)
         end)
 
       assert log_message =~
