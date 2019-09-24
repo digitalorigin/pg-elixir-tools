@@ -1,4 +1,4 @@
-defmodule Metrix.Adapters.LogTest do
+defmodule ElixirTools.Metrix.Adapters.LogTest do
   use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
@@ -15,7 +15,7 @@ defmodule Metrix.Adapters.LogTest do
   end
 
   test "connect" do
-    log_message = capture_log(fn -> Log.connect() end)
+    log_message = capture_log(&Log.connect/0)
     assert log_message =~ "Statsd log adapter: Connect"
   end
 
