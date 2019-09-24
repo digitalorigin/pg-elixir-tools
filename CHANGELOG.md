@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.14.2 (2019-09-17)
+* Metrix: can now be disabled through the configuration
+
 ## 0.14.1 (2019-09-17)
 * Metrix: default tags are no longer mandatory
 
