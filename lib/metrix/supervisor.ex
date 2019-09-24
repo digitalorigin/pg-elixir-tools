@@ -17,7 +17,7 @@ defmodule ElixirTools.Metrix.Supervisor do
       Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
     else
       Logger.info("Metrix did not start because it's disabled.")
-      :ok
+      :ignore
     end
   end
 
