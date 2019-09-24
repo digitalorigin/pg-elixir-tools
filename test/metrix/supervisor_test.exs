@@ -1,7 +1,11 @@
 defmodule ElixirTools.Metrix.SupervisorTest do
   use ExUnit.Case, async: false
 
+  import ElixirTools.MetrixHelper
+
   alias ElixirTools.Metrix
+
+  setup :start_supervisor
 
   setup do
     Logger.configure(level: :debug)

@@ -3,6 +3,8 @@ defmodule ElixirTools.Metrix.Supervisor do
 
   use Supervisor
 
+  require Logger
+
   @typep child :: Supervisor.child_spec() | module | {module, []}
 
   @recurrent_metrics Application.get_env(:pagantis_elixir_tools, ElixirTools.Metrix)[
@@ -11,7 +13,12 @@ defmodule ElixirTools.Metrix.Supervisor do
 
   @spec start_link(any) :: {:ok, pid} | {:error, term}
   def start_link(_ \\ []) do
-    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+    if metrix_enabled?() do
+      Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+    else
+      Logger.info("Metrix did not start because it's disabled.")
+      :ok
+    end
   end
 
   @impl true
@@ -29,4 +36,10 @@ defmodule ElixirTools.Metrix.Supervisor do
 
   @spec add_recurrent_metric_children([child]) :: [child]
   defp add_recurrent_metric_children(children), do: children ++ @recurrent_metrics
+
+  @spec metrix_enabled? :: boolean
+  defp metrix_enabled? do
+    enabled_values = [nil, true, "true"]
+    Application.get_env(:pagantis_elixir_tools, ElixirTools.Metrix)[:enabled] in enabled_values
+  end
 end
