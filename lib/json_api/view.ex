@@ -47,9 +47,8 @@ defmodule ElixirTools.JsonApi.View do
   @spec convert_key(String.t() | atom) :: String.t()
   defp convert_key(key), do: ensure_dash(to_string(key))
 
-  @spec ensure_dash(any) :: any
-  defp ensure_dash(value) when is_binary(value), do: String.replace(value, "_", "-")
-  defp ensure_dash(value), do: value
+  @spec ensure_dash(String.t()) :: String.t()
+  defp ensure_dash(value), do: String.replace(value, "_", "-")
 
   @spec ensure_map(struct | map) :: map
   defp ensure_map(%{__struct__: _} = struct), do: Map.from_struct(struct)
