@@ -69,18 +69,11 @@ defmodule ElixirTools.Events.EventTest do
                {:error, "Expected a number for the fix, but received 1.1.1a"}
     end
 
-    test "returns error when name does not contain an underscore", context do
-      event = %{context.valid_event | name: "EVENT"}
-
-      assert Event.publish(event, FakeAdapterSuccess) ==
-               {:error, "Expected an underscore in the event name, but got EVENT instead"}
-    end
-
     test "returns error when name is not a string", context do
       event = %{context.valid_event | name: :EVENT}
 
       assert Event.publish(event, FakeAdapterSuccess) ==
-               {:error, "Expected a string as event name, but got :EVENT"}
+               {:error, "Expected a string as event name, got :EVENT"}
     end
 
     test "returns error when they payload is not a map", context do

@@ -66,18 +66,9 @@ defmodule ElixirTools.Events.Event do
     do: {:error, "Expected a string as event_id_seed_optional, but got #{inspect(value)}"}
 
   @spec validate_name(any) :: return
-  defp validate_name(name) do
-    cond do
-      !is_binary(name) ->
-        {:error, "Expected a string as event name, but got #{inspect(name)}"}
+  defp validate_name(name) when is_binary(name), do: :ok
 
-      !String.contains?(name, "_") ->
-        {:error, "Expected an underscore in the event name, but got #{name} instead"}
-
-      true ->
-        :ok
-    end
-  end
+  defp validate_name(name), do: {:error, "Expected a string as event name, got #{inspect(name)}"}
 
   @spec validate_event_id_seed(any) :: return
   defp validate_event_id_seed(event_id_seed) do
