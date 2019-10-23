@@ -120,8 +120,8 @@ defmodule ElixirTools.Schema do
       Gets the last record (by inserted_at) where given field equals given value.
       Returns `nil` if nothing was found.
       """
-      @spec last(any, atom) :: t | nil
-      def last(value, field), do: Schema.SchemaImpl.last(__MODULE__, value, field)
+      @spec last(atom, any) :: t | nil
+      def last(field, value), do: Schema.SchemaImpl.last(__MODULE__, field, value)
 
       @doc """
       Fetches all records from the DB.

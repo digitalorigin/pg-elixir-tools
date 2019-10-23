@@ -121,8 +121,8 @@ defmodule ElixirTools.Schema.SchemaImpl do
   @spec get_by(ecto_schema, list) :: t | nil
   def get_by(module, queryable), do: module.repo.get_by(module, queryable)
 
-  @spec last(ecto_schema, any, atom) :: t | nil
-  def last(module, value, field) do
+  @spec last(ecto_schema, atom, any) :: t | nil
+  def last(module, field, value) do
     query =
       from(m in module,
         where: field(m, ^field) == ^value,
