@@ -1,7 +1,8 @@
 defmodule ElixirTools.Schema.SchemaImpl do
   alias Ecto.Changeset
-
   alias ElixirTools.Schema
+
+  import Ecto.Query, only: [from: 2]
 
   @typep repo :: module
   @typep ecto_schema :: module
@@ -119,6 +120,18 @@ defmodule ElixirTools.Schema.SchemaImpl do
   """
   @spec get_by(ecto_schema, list) :: t | nil
   def get_by(module, queryable), do: module.repo.get_by(module, queryable)
+
+  @spec last(ecto_schema, any, atom) :: t | nil
+  def last(module, value, field) do
+    query =
+      from(m in module,
+        where: field(m, ^field) == ^value,
+        order_by: [desc: m.inserted_at],
+        limit: 1
+      )
+
+    module.repo.one(query)
+  end
 
   @doc """
   Gets the first record by `key`: `value`
