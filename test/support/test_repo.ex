@@ -26,6 +26,9 @@ defmodule Support.TestRepo do
   def get_by!(_, id: "existing" = id), do: %TestSchema{id: id}
   def get_by!(_, id: "non-existing" = id), do: raise(Ecto.NoResultsError, queryable: id)
 
+  @spec one(any) :: Support.TestSchema.t()
+  def one(_), do: %TestSchema{id: "existing"}
+
   @spec all(any, Keyword.t()) :: [TestSchema.t()]
   def all(module, queryable \\ [])
   def all(_, test_field_1: "dummy"), do: [%TestSchema{test_field_1: "dummy"}]

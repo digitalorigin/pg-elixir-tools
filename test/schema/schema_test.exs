@@ -249,6 +249,17 @@ defmodule ElixirTools.SchemaTest do
     end
   end
 
+  describe "last/2" do
+    test "returns a struct when it can be found" do
+      assert TestSchema.last(:test_field_3, "new") == %TestSchema{
+               id: "existing",
+               test_field_1: nil,
+               test_field_2: nil,
+               test_field_3: "new"
+             }
+    end
+  end
+
   describe "create/1" do
     test "validates before insertion" do
       map = %{}
