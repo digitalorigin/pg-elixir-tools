@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.14.3 (2019-10-24)
-* Schema: add last function
+* Schema: add `last/2` function which returns the last record (by inserted_at) where given field equals given value
 
 ## 0.14.2 (2019-09-17)
 * Metrix: can now be disabled through the configuration
