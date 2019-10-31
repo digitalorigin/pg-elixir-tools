@@ -1,4 +1,4 @@
-defmodule Support.Events.TaskSupervisorFake do
+defmodule ElixirTools.TestHelper.TaskSupervisorFake do
   use ElixirTools.ContractImpl, module: Task.Supervisor
 
   @impl true

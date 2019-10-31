@@ -6,14 +6,12 @@ defmodule ElixirTools.TestHelper.EventHandlerFake do
   @impl true
   def publish(event, _) do
     send(self(), {:publish_event, event})
-
     :ok
   end
 
   @impl true
   def create(event_name, payload, event_id_seed) do
     send(self(), {:create_event, [event_name, payload, event_id_seed]})
-
     %Event{name: event_name, payload: payload, event_id_seed: event_id_seed}
   end
 

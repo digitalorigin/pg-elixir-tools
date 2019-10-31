@@ -6,14 +6,12 @@ defmodule ElixirTools.TestHelper.DateTimeFake do
   @impl true
   def utc_now() do
     send(self(), :utc_now)
-
     @datetime
   end
 
   @impl true
   def to_string(datetime) do
     send(self(), {:date_time_to_string, datetime})
-
     @datetime
   end
 
