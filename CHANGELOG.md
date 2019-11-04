@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.15.0 (2019-11-04)
+* Add TestHelpers: DateTimeFake, EventHandlerFake and TaskSupervisorFake.
+
 ## 0.14.3 (2019-10-24)
 * Schema: add `last/2` function which returns the last record (by inserted_at) where given field equals given value
 
