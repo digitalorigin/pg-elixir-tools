@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.16.0 (2019-11-12)
+* Add TestHelpers: MetrixFake.
+
 ## 0.15.0 (2019-11-04)
 * Add TestHelpers: DateTimeFake, EventHandlerFake and TaskSupervisorFake.
 
