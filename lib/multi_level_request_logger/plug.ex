@@ -5,6 +5,8 @@ defmodule ElixirTools.MultiLevelRequestLogger.Plug do
 
   plug(Plug.Logger, builder_opts())
 
+  @type log_levels :: :warn | :error | :info | :debug
+
   @default_log_level :info
   @allowed_log_levels [:warn, :error, :info, :debug]
 
@@ -19,6 +21,7 @@ defmodule ElixirTools.MultiLevelRequestLogger.Plug do
     super(conn, log: log_level)
   end
 
+  @spec log_level_for_path(String.t()) :: log_levels
   defp log_level_for_path(path) do
     config = Application.get_env(:pagantis_elixir_tools, ElixirTools.MultiLevelRequestLogger)
     path_log_levels = config[:path_log_level] || %{}
@@ -39,6 +42,7 @@ defmodule ElixirTools.MultiLevelRequestLogger.Plug do
     end
   end
 
+  @spec log_level_for_path(map) :: log_levels
   defp default_log_level(config) do
     configured_level = config[:default_log_level]
 
