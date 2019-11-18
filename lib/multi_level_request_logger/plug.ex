@@ -13,7 +13,6 @@ defmodule ElixirTools.MultiLevelRequestLogger.Plug do
   def init(opts), do: opts
 
   @impl true
-  @spec call(Conn.t(), any) :: Conn.t()
   def call(conn, _opts \\ []) do
     log_level = conn |> Map.get(:request_path) |> log_level_for_path()
 
