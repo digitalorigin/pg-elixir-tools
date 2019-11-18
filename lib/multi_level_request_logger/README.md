@@ -1,6 +1,8 @@
 # Multi level request logger
 
 The Multi level request logger allows defining different log levels for different requests.
+Available log levels: `:warn, :error, :info, :debug`
+
 
 ## Usage
 
@@ -23,6 +25,6 @@ config :pagantis_elixir_tools, ElixirTools.MultiLevelRequestLogger,
   default_log_level: :info,
   path_log_level: %{
     "/status/elb_ping" => :debug,
-    "..." => :error
+    "/some/other/endpoint" => :error
   }
 ```
