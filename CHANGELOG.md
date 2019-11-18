@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.17.0 (2019-11-18)
+* Plug for setting log levels for specific paths.
+
 ## 0.16.0 (2019-11-12)
 * Add TestHelpers: MetrixFake.
 
