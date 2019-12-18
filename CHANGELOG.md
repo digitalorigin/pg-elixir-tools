@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.17.1 (2019-12-18)
+* Switch to Jason from Poison for ex_aws.
+
 ## 0.17.0 (2019-11-18)
 * Plug for setting log levels for specific paths.
 
