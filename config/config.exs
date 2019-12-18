@@ -22,6 +22,7 @@ use Mix.Config
 #
 
 config :ex_aws, :sns, region: System.get_env("AWS_DEFAULT_REGION")
+config :ex_aws, json_codec: Jason
 
 config :pagantis_elixir_tools, ElixirTools.Metrix,
   default_tags: %{},
