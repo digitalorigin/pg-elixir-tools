@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.17.2 (2020-01-29)
+* Make new dependencies available
+
 ## 0.17.1 (2019-12-18)
 * Switch to Jason from Poison for ex_aws.
 
