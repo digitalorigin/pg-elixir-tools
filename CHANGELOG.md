@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.17.3 (2020-02-19)
+* Make new dependencies available
+
 ## 0.17.2 (2020-01-29)
 * Make new dependencies available
 
