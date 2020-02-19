@@ -1,4 +1,4 @@
-defmodule ElixirTools.IdempotencyController do
+defmodule ElixirTools.IdempotencyKey do
   @moduledoc """
   Provides functionality for idempotent controllers. Extract, verify format of idempotency keys.
   """
@@ -13,8 +13,8 @@ defmodule ElixirTools.IdempotencyController do
   @doc """
   Extract idempotency key from header
   """
-  @spec idempotency_key(Conn.t()) :: {:ok, idempotency_key} | error_format_check
-  def idempotency_key(conn) do
+  @spec get(Conn.t()) :: {:ok, idempotency_key} | error_format_check
+  def get(conn) do
     case get_req_header(conn, "idempotency-key") do
       [idempotency_key] -> check_format(idempotency_key)
       [] -> {:ok, nil}

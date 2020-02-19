@@ -1,10 +1,10 @@
-defmodule ElixirTools.IdempotencyControllerTest do
+defmodule ElixirTools.IdempotencyKeyTest do
   use ExUnit.Case
   import Phoenix.ConnTest, only: [build_conn: 0]
 
   import Plug.Conn
 
-  alias ElixirTools.IdempotencyController
+  alias ElixirTools.IdempotencyKey
 
   describe "idempotency_key/1" do
     setup do
@@ -15,7 +15,7 @@ defmodule ElixirTools.IdempotencyControllerTest do
       idempotency_key = "83cdc530-bb18-11e8-b568-0800200c9a66"
       updated_conn = put_req_header(conn, "idempotency-key", idempotency_key)
 
-      assert {:ok, idempotency_key} == IdempotencyController.idempotency_key(updated_conn)
+      assert {:ok, idempotency_key} == IdempotencyKey.get(updated_conn)
     end
 
     test "returns error if format is not UUID", %{conn: conn} do
@@ -23,11 +23,11 @@ defmodule ElixirTools.IdempotencyControllerTest do
       updated_conn = put_req_header(conn, "idempotency-key", idempotency_key)
 
       assert {:error, :wrong_format_idempotency_key} ==
-               IdempotencyController.idempotency_key(updated_conn)
+               IdempotencyKey.get(updated_conn)
     end
 
     test "returns nil when idempotency key is missing", %{conn: conn} do
-      assert {:ok, nil} == IdempotencyController.idempotency_key(conn)
+      assert {:ok, nil} == IdempotencyKey.get(conn)
     end
   end
 end
