@@ -16,12 +16,6 @@ defmodule ElixirTools.TestHelper.EventHandlerFake do
   end
 
   @impl true
-  def set_version(event, version) do
-    send(self(), {:set_event_version, [event, version]})
-    %{event | version: version}
-  end
-
-  @impl true
   @spec create(any, any, any, nil | keyword | map) :: ElixirTools.Events.Event.t()
   def create(event_name, payload, event_id_seed, optional_params) do
     send(self(), {:create_event, [event_name, payload, event_id_seed, optional_params]})
@@ -31,7 +25,8 @@ defmodule ElixirTools.TestHelper.EventHandlerFake do
       payload: payload,
       event_id_seed: event_id_seed,
       event_id_seed_optional: optional_params[:event_id_seed_optional],
-      occurred_at: optional_params[:occurred_at]
+      occurred_at: optional_params[:occurred_at],
+      version: optional_params[:version]
     }
   end
 end

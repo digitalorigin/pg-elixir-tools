@@ -19,7 +19,6 @@ defmodule ElixirTools.Events.EventHandler do
   @typep event_name :: String.t()
   @typep payload :: map
   @typep event_id_seed :: Ecto.UUID.t()
-  @typep event_id_seed_optional :: String.t()
 
   @spec create(event_name, payload, event_id_seed) :: Event.t()
   def create(event_name, payload, event_id_seed) do
@@ -27,24 +26,24 @@ defmodule ElixirTools.Events.EventHandler do
   end
 
   @typep create_optional ::
-           {:event_id_seed_optional, event_id_seed_optional}
+           {:event_id_seed_optional, String.t()}
            | {:occurred_at, DateTime.t()}
+           | {:version, String.t()}
   @spec create(event_name, payload, event_id_seed, [create_optional]) :: Event.t()
   def create(event_name, payload, event_id_seed, create_optional) do
     event_id_seed_optional = create_optional[:event_id_seed_optional] || ""
     occurred_at = create_optional[:occurred_at]
+    version = create_optional[:version] || "1.0.0"
 
     %Event{
       name: event_name,
       payload: payload,
       event_id_seed: event_id_seed,
       event_id_seed_optional: event_id_seed_optional,
-      occurred_at: occurred_at
+      occurred_at: occurred_at,
+      version: version
     }
   end
-
-  @spec set_version(Event.t(), String.t()) :: Event.t()
-  def set_version(event, version), do: %{event | version: version}
 
   @spec publish(Event.t(), [events_opt]) :: :ok
   def publish(event, opts) do

@@ -22,13 +22,6 @@ defmodule ElixirTools.Events.EventHandlerTest do
     %{payload: payload, event: event}
   end
 
-  describe "set_version/2" do
-    test "version is set as expected" do
-      event = %Event{name: "event_name", event_id_seed: "event_id_seed"}
-      assert EventHandler.set_version(event, "v1") == %{event | version: "v1"}
-    end
-  end
-
   describe "create/3" do
     test "event is created as expected", %{payload: payload, event: event} do
       event_name = "CHARGE_CREATED"
