@@ -4,6 +4,14 @@ defmodule ElixirTools.TestHelper.EventHandlerFakeTest do
   alias ElixirTools.TestHelper.EventHandlerFake
   alias ElixirTools.Events.Event
 
+  describe "set_version/2" do
+    test "returns expected value and sends expected message" do
+      event = %Event{name: "event_name", event_id_seed: "event_id_seed"}
+      assert EventHandlerFake.set_version(event, "v1") == %{event | version: "v1"}
+      assert_received {:set_event_version, [^event, "v1"]}
+    end
+  end
+
   describe "publish/2" do
     test "returns expected value and sends expected message" do
       assert EventHandlerFake.publish("event", "opts") == :ok

@@ -43,6 +43,9 @@ defmodule ElixirTools.Events.EventHandler do
     }
   end
 
+  @spec set_version(Event.t(), String.t()) :: Event.t()
+  def set_version(event, version), do: %{event | version: version}
+
   @spec publish(Event.t(), [events_opt]) :: :ok
   def publish(event, opts) do
     task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
