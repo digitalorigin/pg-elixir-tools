@@ -23,19 +23,21 @@ defmodule ElixirTools.TestHelper.EventHandlerFakeTest do
     test "returns expected value and sends expected message" do
       optional_params = %{
         event_id_seed_optional: "event_id_seed_optional",
-        occurred_at: "occurred_at"
+        occurred_at: "occurred_at",
+        version: "1.42.0"
       }
 
-      event = %Event{
+      expected_event = %Event{
         name: "event_name",
         payload: "payload",
         event_id_seed: "event_id_seed",
         event_id_seed_optional: optional_params[:event_id_seed_optional],
-        occurred_at: optional_params[:occurred_at]
+        occurred_at: optional_params[:occurred_at],
+        version: optional_params[:version]
       }
 
       assert EventHandlerFake.create("event_name", "payload", "event_id_seed", optional_params) ==
-               event
+               expected_event
 
       assert_received {:create_event,
                        ["event_name", "payload", "event_id_seed", ^optional_params]}
