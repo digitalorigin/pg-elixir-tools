@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.17.4 (2020-03-06)
+* Events: possible to set version during creation
+
 ## 0.17.3 (2020-02-19)
 * Make new dependencies available
 
