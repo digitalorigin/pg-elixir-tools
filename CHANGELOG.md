@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.17.5 (2020-03-06)
+* Events: add default version value to EventHandlerFake.create/4
+
 ## 0.17.4 (2020-03-06)
 * Events: possible to set version during creation
 
