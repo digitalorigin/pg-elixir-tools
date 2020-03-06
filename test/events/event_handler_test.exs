@@ -37,14 +37,22 @@ defmodule ElixirTools.Events.EventHandlerTest do
       event_name = "CHARGE_CREATED"
       event_id_seed = "22833003-fb25-4961-8373-f01da28ec820"
       event_id_seed_optional = "event_id_seed_optional"
+      version = "1.42.0"
       occurred_at = Timex.now()
 
       optional_params = [
         {:event_id_seed_optional, "event_id_seed_optional"},
-        {:occurred_at, occurred_at}
+        {:occurred_at, occurred_at},
+        {:version, version}
       ]
 
-      event = %{event | event_id_seed_optional: event_id_seed_optional, occurred_at: occurred_at}
+      event = %{
+        event
+        | event_id_seed_optional: event_id_seed_optional,
+          occurred_at: occurred_at,
+          version: version
+      }
+
       assert EventHandler.create(event_name, payload, event_id_seed, optional_params) == event
       assert Event.validate(event) == :ok
     end

@@ -25,7 +25,8 @@ defmodule ElixirTools.TestHelper.EventHandlerFake do
       payload: payload,
       event_id_seed: event_id_seed,
       event_id_seed_optional: optional_params[:event_id_seed_optional],
-      occurred_at: optional_params[:occurred_at]
+      occurred_at: optional_params[:occurred_at],
+      version: optional_params[:version]
     }
   end
 end
