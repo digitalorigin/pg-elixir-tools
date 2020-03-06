@@ -62,7 +62,7 @@ config :ex_aws, :sns,
 
 ## Usage
 ```elixir
-EventHandler.create(name, payload, event_id_seed, [{:event_id_seed_optional, event_id_seed_optional}, {:occurred_at, occurred_at}])
+EventHandler.create(name, payload, event_id_seed, [{:event_id_seed_optional, event_id_seed_optional}, {:occurred_at, occurred_at}, {:version, version}])
 Event.publish(%Event{name: "NAME_EXAMPLE", event_id_seed: "f367d382-6452-435c-ad83-3477bd530349", payload: %{key: "value"}, version: "1.0.0"}
 ```
 Where:
@@ -72,6 +72,7 @@ Where:
 If all values will be the same -> event_id will be the same -> event will be updated in S3.
 * `event_id_seed_optional` - string, optional part used for event_id generation. By default - ""(empty string)
 * `occurred_at` - optional, datetime, if provided - overwrite `current datetime` sent by default
+* `version` - optional, string, overwrite default "1.0.0" value
 
 An example can be found here [https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events](https://github.com/digitalorigin/pg-elixir-tools/tree/master/examples/events).
 
