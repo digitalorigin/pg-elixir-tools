@@ -29,8 +29,8 @@ defmodule Support.TestRepo do
   @spec one(any) :: Support.TestSchema.t()
   def one(_), do: %TestSchema{id: "existing"}
 
-  @spec all(any, Keyword.t()) :: [TestSchema.t()]
-  def all(module, queryable \\ [])
-  def all(_, test_field_1: "dummy"), do: [%TestSchema{test_field_1: "dummy"}]
-  def all(_, _), do: [%TestSchema{}, %TestSchema{}]
+  @spec all(any) :: [TestSchema.t()]
+  def all(queryable \\ [])
+  def all(test_field_1: "dummy"), do: [%TestSchema{test_field_1: "dummy"}]
+  def all(_), do: [%TestSchema{}, %TestSchema{}]
 end

@@ -143,7 +143,7 @@ defmodule ElixirTools.Schema.SchemaImpl do
   Fetches all records from the DB.
   """
   @spec all(ecto_schema, list) :: [t]
-  def all(module, queryable), do: module.repo.all(module, queryable)
+  def all(module, queryable), do: module.repo.all(queryable || module)
 
   @doc """
   Preloads a field on a struct.
