@@ -140,7 +140,7 @@ defmodule ElixirTools.Schema.SchemaImpl do
   def get_by!(module, queryable), do: module.repo.get_by!(module, queryable)
 
   @doc """
-  Fetches all records from the DB.
+  Gets all entities based on query. If no query is given, all entities are returned.
   """
   @spec all(ecto_schema, list) :: [t]
   def all(module, queryable), do: module.repo.all(queryable || module)

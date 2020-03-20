@@ -124,7 +124,7 @@ defmodule ElixirTools.Schema do
       def last(field, value), do: Schema.SchemaImpl.last(__MODULE__, field, value)
 
       @doc """
-      Fetches all records from the DB.
+      Gets all entities based on query. If no query is given, all entities are returned.
       """
       @spec all(list) :: [t]
       def all(queryable \\ []), do: Schema.SchemaImpl.all(__MODULE__, queryable)

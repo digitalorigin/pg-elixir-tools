@@ -1,5 +1,8 @@
 defmodule ElixirTools.SchemaTest do
   use ExUnit.Case, async: true
+
+  import Ecto.Query
+
   alias ElixirTools.Schema
   alias Support.{TestSchema, UniqueConstraintTestSchema}
 
@@ -320,7 +323,13 @@ defmodule ElixirTools.SchemaTest do
 
   describe "all/1" do
     test "returns a list of records based on the query" do
-      assert TestSchema.all(test_field_1: "dummy") == [%TestSchema{test_field_1: "dummy"}]
+      expected = [%TestSchema{test_field_1: "dummy"}]
+      assert TestSchema.all(from(o in TestSchema, where: o.something == ^1)) == expected
+    end
+
+    test "when passing the entity itself" do
+      expected = [%TestSchema{}, %TestSchema{}]
+      assert TestSchema.all(TestSchema) == expected
     end
   end
 end

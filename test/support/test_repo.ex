@@ -31,6 +31,6 @@ defmodule Support.TestRepo do
 
   @spec all(any) :: [TestSchema.t()]
   def all(queryable \\ [])
-  def all(test_field_1: "dummy"), do: [%TestSchema{test_field_1: "dummy"}]
+  def all(%Ecto.Query{}), do: [%TestSchema{test_field_1: "dummy"}]
   def all(_), do: [%TestSchema{}, %TestSchema{}]
 end
