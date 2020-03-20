@@ -126,8 +126,11 @@ defmodule ElixirTools.Schema do
       @doc """
       Gets all entities based on query. If no query is given, all entities are returned.
       """
-      @spec all(list) :: [t]
-      def all(queryable \\ []), do: Schema.SchemaImpl.all(__MODULE__, queryable)
+      @spec all() :: [t]
+      def all(), do: Schema.SchemaImpl.all(__MODULE__, __MODULE__)
+
+      @spec all(Ecto.Query.t()) :: [t]
+      def all(queryable), do: Schema.SchemaImpl.all(__MODULE__, queryable)
 
       @doc """
       Preloads a field or multiple fields on a struct.
