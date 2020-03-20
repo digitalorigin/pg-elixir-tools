@@ -9,7 +9,7 @@ defmodule ElixirTools.Credo.NamingCheck do
   @parts_to_be_cleaned ["/controllers/", "/views/"]
 
   def valid_filename?(filepath, module_name, opts) do
-    if(String.contains?(filepath, @parts_to_be_cleaned)) do
+    if String.contains?(filepath, @parts_to_be_cleaned) do
       filepath = String.replace(filepath, @parts_to_be_cleaned, "/")
       ModuleFilename.valid_filename?(filepath, module_name, opts)
     else
