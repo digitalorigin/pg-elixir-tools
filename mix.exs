@@ -20,7 +20,8 @@ defmodule ElixirTools.MixProject do
         extras: [
           "README.md"
         ]
-      ]
+      ],
+      dialyzer: [plt_add_apps: [:credo_naming]]
     ]
   end
 
