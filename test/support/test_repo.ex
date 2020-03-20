@@ -30,7 +30,7 @@ defmodule Support.TestRepo do
   def one(_), do: %TestSchema{id: "existing"}
 
   @spec all(any) :: [TestSchema.t()]
-  def all(queryable \\ [])
   def all(%Ecto.Query{}), do: [%TestSchema{test_field_1: "dummy"}]
-  def all(_), do: [%TestSchema{}, %TestSchema{}]
+  def all(TestSchema), do: [%TestSchema{}, %TestSchema{}]
+  def all(), do: [%TestSchema{}, %TestSchema{}]
 end
