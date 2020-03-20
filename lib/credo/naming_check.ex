@@ -1,6 +1,6 @@
 defmodule ElixirTools.Credo.NamingCheck do
   @moduledoc """
-  This mudule provides paths modification for typical Phoenix paths for controllers/views
+  This module makes CredoNaming compatible with typical Phoenix paths for controllers/views.
   To use it add `{CredoNaming.Check.Consistency.ModuleFilename, valid_filename_callback: &ElixirTools.Credo.NamingCheck.valid_filename?/3}`
   to your .credo.exs
   """
