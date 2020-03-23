@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.18.0 (2020-03-23)
+* Add fake rollbax
+* Fix: Schema.all/1 functionality
+
 ## 0.17.5 (2020-03-06)
 * Events: add default version value to EventHandlerFake.create/4
 
