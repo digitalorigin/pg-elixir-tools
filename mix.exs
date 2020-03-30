@@ -51,6 +51,7 @@ defmodule ElixirTools.MixProject do
       {:elixir_uuid, "~> 1.2"},
       {:jason, "~> 1.1"},
       {:ja_serializer, "~> 0.14"},
+      {:ex_json_schema, "~> 0.5"},
       {:ecto_sql, "~> 3.0"},
       {:statix, ">= 0.0.0"},
       {:httpoison, "~> 1.4"},

@@ -1,5 +1,6 @@
 defmodule ElixirTools.Events.EventHandler do
   alias ElixirTools.Events.{Event, NotSentEvent}
+  alias ExJsonSchema.Validator
 
   @type events_opt ::
           {:event_handler_module, module}
@@ -7,14 +8,18 @@ defmodule ElixirTools.Events.EventHandler do
           | {:event_module, module}
           | {:not_sent_event_module, module}
           | {:telemetry_module, module}
-  @callback send_event(any, [events_opt]) :: :ok
 
+  @typep event_schema :: map
+
+  @callback send_event(any, [events_opt]) :: :ok
   @callback create(event_name, payload) :: Event.t()
   @callback publish(Event.t(), [events_opt]) :: :ok
+  @callback publish(Event.t(), event_schema, [events_opt]) :: :ok
 
   @optional_callbacks send_event: 2,
                       create: 2,
-                      publish: 2
+                      publish: 2,
+                      publish: 3
 
   @typep event_name :: String.t()
   @typep payload :: map
@@ -54,6 +59,46 @@ defmodule ElixirTools.Events.EventHandler do
     end)
 
     :ok
+  end
+
+  @spec publish(Event.t(), event_schema, [events_opt]) :: :ok
+  def publish(event, schema, opts) do
+    task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
+    not_sent_event_module = opts[:not_sent_event_module] || NotSentEvent
+
+    if valid_event?(schema, event) do
+      task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
+        publish_event_call(event, opts)
+      end)
+    else
+      error_info =
+        event |> Map.from_struct() |> Map.put(:reason, "Event schema validation failed.")
+
+      not_sent_event_module.create!(%{content: Jason.encode!(error_info)})
+    end
+
+    :ok
+  end
+
+  @spec valid_event?(event_schema, Event.t()) :: boolean
+  defp valid_event?(schema, event) do
+    stringified_keys_event = event |> Map.from_struct() |> map_to_string_keys()
+
+    Validator.valid?(schema, stringified_keys_event)
+  end
+
+  @spec map_to_string_keys(map) :: map
+  defp map_to_string_keys(map) do
+    Map.new(map, fn {key, value} ->
+      formatted_value =
+        cond do
+          is_map(value) -> map_to_string_keys(value)
+          is_atom(value) -> Atom.to_string(value)
+          true -> value
+        end
+
+      {Atom.to_string(key), formatted_value}
+    end)
   end
 
   @spec publish_event_call(Event.t(), [events_opt]) :: :ok | :error
