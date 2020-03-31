@@ -88,18 +88,7 @@ defmodule ElixirTools.Events.EventHandler do
   end
 
   @spec map_to_string_keys(map) :: map
-  defp map_to_string_keys(map) do
-    Map.new(map, fn {key, value} ->
-      formatted_value =
-        cond do
-          is_map(value) -> map_to_string_keys(value)
-          is_atom(value) -> Atom.to_string(value)
-          true -> value
-        end
-
-      {Atom.to_string(key), formatted_value}
-    end)
-  end
+  defp map_to_string_keys(map), do: map |> Jason.encode!() |> Jason.decode!()
 
   @spec publish_event_call(Event.t(), [events_opt]) :: :ok | :error
   def publish_event_call(event, opts) do
