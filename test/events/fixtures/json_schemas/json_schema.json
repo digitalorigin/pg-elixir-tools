@@ -1,0 +1,141 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The Root Schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "required": [
+        "event_id_seed",
+        "event_id_seed_optional",
+        "name",
+        "occurred_at",
+        "payload",
+        "version"
+    ],
+    "properties": {
+        "event_id_seed": {
+            "id": "#/properties/event_id_seed",
+            "type": "string",
+            "title": "The Event_id_seed Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "22833003-fb25-4961-8373-f01da28ec820"
+            ]
+        },
+        "event_id_seed_optional": {
+            "id": "#/properties/event_id_seed_optional",
+            "type": "string",
+            "title": "The Event_id_seed_optional Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                ""
+            ]
+        },
+        "name": {
+            "id": "#/properties/name",
+            "type": "string",
+            "title": "The Name Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "CHARGE_CREATED"
+            ]
+        },
+        "occurred_at": {
+            "id": "#/properties/occurred_at",
+            "title": "The Occurred_at Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": null,
+            "examples": [
+                null
+            ]
+        },
+        "payload": {
+            "id": "#/properties/payload",
+            "type": "object",
+            "title": "The Payload Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "amount": 1.0,
+                    "charge_id": "charge_id",
+                    "payment_method_id": "payment_method_id",
+                    "created_at": "created_at",
+                    "type": "card"
+                }
+            ],
+            "required": [
+                "amount",
+                "charge_id",
+                "created_at",
+                "payment_method_id",
+                "type"
+            ],
+            "properties": {
+                "amount": {
+                    "id": "#/properties/payload/properties/amount",
+                    "type": "integer",
+                    "title": "The Amount Schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        1
+                    ]
+                },
+                "charge_id": {
+                    "id": "#/properties/payload/properties/charge_id",
+                    "type": "string",
+                    "title": "The Charge_id Schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "charge_id"
+                    ]
+                },
+                "created_at": {
+                    "id": "#/properties/payload/properties/created_at",
+                    "type": "string",
+                    "title": "The Created_at Schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "created_at"
+                    ]
+                },
+                "payment_method_id": {
+                    "id": "#/properties/payload/properties/payment_method_id",
+                    "type": "string",
+                    "title": "The Payment_method_id Schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "payment_method_id"
+                    ]
+                },
+                "type": {
+                    "id": "#/properties/payload/properties/type",
+                    "type": "string",
+                    "title": "The Type Schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "card"
+                    ]
+                }
+            }
+        },
+        "version": {
+            "id": "#/properties/version",
+            "type": "string",
+            "title": "The Version Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "1.0.0"
+            ]
+        }
+    }
+}

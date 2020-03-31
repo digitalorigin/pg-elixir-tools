@@ -4,6 +4,8 @@ defmodule ElixirTools.Events.Event do
   `event_id_seed` is used for `event_id` generation(UUID5) together with `name` & `version`.
   So if all values are the same event will be updated.
   """
+  alias ExJsonSchema.Validator
+
   alias __MODULE__
 
   @type t :: %Event{
@@ -51,6 +53,20 @@ defmodule ElixirTools.Events.Event do
       :ok
     end
   end
+
+  @typep event_schema :: map
+  @spec validate_json_schema(event_schema, Event.t()) :: :ok | {:error, String.t()}
+  def validate_json_schema(schema, event) do
+    stringified_keys_event = to_string_keys(event)
+
+    case Validator.validate(schema, stringified_keys_event) do
+      {:error, [{reason, details} | _]} -> {:error, Enum.join([reason, details], ": ")}
+      :ok -> :ok
+    end
+  end
+
+  @spec to_string_keys(Event.t()) :: map
+  defp to_string_keys(event), do: event |> Map.from_struct() |> Jason.encode!() |> Jason.decode!()
 
   @spec validate_occurred_at(any) :: return
   defp validate_occurred_at(%DateTime{}), do: :ok
