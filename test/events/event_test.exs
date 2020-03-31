@@ -156,7 +156,8 @@ defmodule ElixirTools.Events.EventTest do
 
       {:error, reason} = Event.validate_json_schema(context.event_json_schema, invalid_event)
 
-      assert reason == "Required properties amount, charge_id, created_at, payment_method_id, type were not present.: #/payload"
+      assert reason ==
+               "Required properties amount, charge_id, created_at, payment_method_id, type were not present.: #/payload"
     end
   end
 end
