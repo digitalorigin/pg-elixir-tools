@@ -21,7 +21,10 @@ defmodule ElixirTools.Events.EventTest do
       event_id_seed: "016c25fd-70e0-56fe-9d1a-56e80fa20b82"
     }
 
-    %{valid_event: valid_event}
+    event_json_schema =
+      "test/events/fixtures/json_schemas/json_schema.json" |> File.read!() |> Jason.decode!()
+
+    %{valid_event: valid_event, event_json_schema: event_json_schema}
   end
 
   describe "publish/2" do
@@ -123,6 +126,38 @@ defmodule ElixirTools.Events.EventTest do
       event = %{context.valid_event | occurred_at: Timex.now()}
 
       assert Event.publish(event, FakeAdapterSuccess) == :ok
+    end
+  end
+
+  describe "validate_json_schema/2" do
+    test "returns ok when json schema validates event", context do
+      event = %Event{
+        name: "CHARGE_CREATED",
+        payload: %{
+          amount: 1,
+          charge_id: "charge_id",
+          created_at: "created_at",
+          payment_method_id: "payment_method_id",
+          type: :card
+        },
+        version: "1.0.0",
+        event_id_seed: "22833003-fb25-4961-8373-f01da28ec820"
+      }
+
+      assert Event.validate_json_schema(context.event_json_schema, event) == :ok
+    end
+
+    test "returns error when json schema doesnt validate event", context do
+      invalid_event = %Event{
+        name: "CHARGE_CREATED",
+        version: "1.0.0",
+        event_id_seed: "22833003-fb25-4961-8373-f01da28ec820"
+      }
+
+      {:error, reason} = Event.validate_json_schema(context.event_json_schema, invalid_event)
+
+      assert reason ==
+               "Required properties amount, charge_id, created_at, payment_method_id, type were not present.: #/payload"
     end
   end
 end
