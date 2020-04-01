@@ -251,7 +251,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
 
       expected_schema = context.schema
 
-      refute_received(:start)
+      assert_received(:start)
       refute_received({:publish, _})
       assert_received({:validate_json_schema, [^expected_schema, ^wrong_event]})
 

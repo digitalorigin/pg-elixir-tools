@@ -64,15 +64,12 @@ defmodule ElixirTools.Events.EventHandler do
     event_module = opts[:event_module] || Event
     task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
 
-    case event_module.validate_json_schema(schema, event) do
-      :ok ->
-        task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
-          publish_event_call(event, opts)
-        end)
-
-      {:error, reason} ->
-        handle_error(event, reason, opts)
-    end
+    task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
+      case event_module.validate_json_schema(schema, event) do
+        :ok -> publish_event_call(event, opts)
+        {:error, reason} -> handle_error(event, reason, opts)
+      end
+    end)
 
     :ok
   end
