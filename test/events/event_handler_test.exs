@@ -233,7 +233,8 @@ defmodule ElixirTools.Events.EventHandlerTest do
       opts = [
         {:task_supervisor_module, TaskSupervisorFake},
         {:event_module, EventFakeKoValidation},
-        {:not_sent_event_module, FakeNotSentEvent}
+        {:not_sent_event_module, FakeNotSentEvent},
+        {:telemetry_module, TelemetryFake}
       ]
 
       wrong_event = Map.drop(context.event, [:version])
@@ -244,7 +245,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
         {:create_not_sent_event,
          %{
            content:
-             "{\"event_id_seed\":\"22833003-fb25-4961-8373-f01da28ec820\",\"event_id_seed_optional\":\"\",\"name\":\"CHARGE_CREATED\",\"occurred_at\":null,\"payload\":{\"amount\":1,\"charge_id\":\"charge_id\",\"created_at\":\"created_at\",\"payment_method_id\":\"payment_method_id\",\"type\":\"card\"},\"reason\":\"reason\"}"
+             "{\"event_id_seed\":\"22833003-fb25-4961-8373-f01da28ec820\",\"event_id_seed_optional\":\"\",\"name\":\"CHARGE_CREATED\",\"occurred_at\":null,\"payload\":{\"amount\":1,\"charge_id\":\"charge_id\",\"created_at\":\"created_at\",\"payment_method_id\":\"payment_method_id\",\"type\":\"card\"},\"reason\":\"\\\"reason\\\"\"}"
          }}
       )
 
@@ -253,6 +254,29 @@ defmodule ElixirTools.Events.EventHandlerTest do
       refute_received(:start)
       refute_received({:publish, _})
       assert_received({:validate_json_schema, [^expected_schema, ^wrong_event]})
+
+      expected_error_info = %{
+        event_id_seed: "22833003-fb25-4961-8373-f01da28ec820",
+        event_id_seed_optional: "",
+        name: "CHARGE_CREATED",
+        occurred_at: nil,
+        payload: %{
+          amount: 1,
+          charge_id: "charge_id",
+          created_at: "created_at",
+          payment_method_id: "payment_method_id",
+          type: :card
+        },
+        reason: "\"reason\""
+      }
+
+      assert_received(
+        {:telemetry_execute,
+         %{
+           event_name: [:pagantis_elixir_tools, :events, :not_sent],
+           measurements: %{error_info: ^expected_error_info}
+         }}
+      )
     end
 
     test "event publishing call returns error", context do
