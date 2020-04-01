@@ -7,14 +7,17 @@ defmodule ElixirTools.Events.EventHandler do
           | {:event_module, module}
           | {:not_sent_event_module, module}
           | {:telemetry_module, module}
-  @callback send_event(any, [events_opt]) :: :ok
 
+  @typep event_schema :: map
+  @callback send_event(any, [events_opt]) :: :ok
   @callback create(event_name, payload) :: Event.t()
   @callback publish(Event.t(), [events_opt]) :: :ok
+  @callback publish(Event.t(), event_schema, [events_opt]) :: :ok
 
   @optional_callbacks send_event: 2,
                       create: 2,
-                      publish: 2
+                      publish: 2,
+                      publish: 3
 
   @typep event_name :: String.t()
   @typep payload :: map
@@ -56,26 +59,45 @@ defmodule ElixirTools.Events.EventHandler do
     :ok
   end
 
+  @spec publish(Event.t(), event_schema, [events_opt]) :: :ok
+  def publish(event, schema, opts) do
+    event_module = opts[:event_module] || Event
+    task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
+
+    task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
+      case event_module.validate_json_schema(schema, event) do
+        :ok -> publish_event_call(event, opts)
+        {:error, reason} -> handle_error(event, reason, opts)
+      end
+    end)
+
+    :ok
+  end
+
   @spec publish_event_call(Event.t(), [events_opt]) :: :ok | :error
   def publish_event_call(event, opts) do
     event_module = opts[:event_module] || Event
-    not_sent_event_module = opts[:not_sent_event_module] || NotSentEvent
-    telemetry_module = opts[:telemetry_module] || :telemetry
 
     case event_module.publish(event) do
-      {:error, reason} ->
-        error_info = event |> Map.from_struct() |> Map.put(:reason, inspect(reason))
-
-        telemetry_module.execute(
-          [:pagantis_elixir_tools, :events, :not_sent],
-          %{error_info: error_info}
-        )
-
-        not_sent_event_module.create!(%{content: Jason.encode!(error_info)})
-        :error
-
-      _ ->
-        :ok
+      {:error, reason} -> handle_error(event, reason, opts)
+      _ -> :ok
     end
+  end
+
+  @spec handle_error(Event.t(), String.t(), [events_opt]) :: :error
+  defp handle_error(event, error_reason, opts) do
+    telemetry_module = opts[:telemetry_module] || :telemetry
+    not_sent_event_module = opts[:not_sent_event_module] || NotSentEvent
+
+    error_info = event |> Map.from_struct() |> Map.put(:reason, inspect(error_reason))
+
+    telemetry_module.execute(
+      [:pagantis_elixir_tools, :events, :not_sent],
+      %{error_info: error_info}
+    )
+
+    not_sent_event_module.create!(%{content: Jason.encode!(error_info)})
+
+    :error
   end
 end
