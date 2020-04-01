@@ -7,14 +7,17 @@ defmodule ElixirTools.Events.EventHandler do
           | {:event_module, module}
           | {:not_sent_event_module, module}
           | {:telemetry_module, module}
-  @callback send_event(any, [events_opt]) :: :ok
 
+  @typep event_schema :: map
+  @callback send_event(any, [events_opt]) :: :ok
   @callback create(event_name, payload) :: Event.t()
   @callback publish(Event.t(), [events_opt]) :: :ok
+  @callback publish(Event.t(), event_schema, [events_opt]) :: :ok
 
   @optional_callbacks send_event: 2,
                       create: 2,
-                      publish: 2
+                      publish: 2,
+                      publish: 3
 
   @typep event_name :: String.t()
   @typep payload :: map
@@ -52,6 +55,27 @@ defmodule ElixirTools.Events.EventHandler do
     task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
       publish_event_call(event, opts)
     end)
+
+    :ok
+  end
+
+  @spec publish(Event.t(), event_schema, [events_opt]) :: :ok
+  def publish(event, schema, opts) do
+    event_module = opts[:event_module] || Event
+    task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
+    not_sent_event_module = opts[:not_sent_event_module] || NotSentEvent
+
+    case event_module.validate_json_schema(schema, event) do
+      :ok ->
+        task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
+          publish_event_call(event, opts)
+        end)
+
+      {:error, reason} ->
+        error_info = event |> Map.from_struct() |> Map.put(:reason, reason)
+
+        not_sent_event_module.create!(%{content: Jason.encode!(error_info)})
+    end
 
     :ok
   end
