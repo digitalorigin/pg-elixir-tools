@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.19.0 (2020-04-01)
+* Events: publish event with JSON schema validation.
+
 ## 0.18.0 (2020-03-23)
 * Add fake rollbax
 * Fix: Schema.all/1 functionality
