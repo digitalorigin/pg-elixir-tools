@@ -123,4 +123,27 @@ defmodule ElixirTools.Events.Event do
       {:parse_fix, _} -> {:error, "Expected a number for the fix, but received #{version}"}
     end
   end
+
+  @spec add_envelope(Event.t(), [publish_opt]) :: map
+  defp add_envelope(event, opts) do
+    uuid_module = opts[:uuid_module] || UUID
+    timex_module = opts[:timex_module] || Timex
+
+    config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
+    group = opts[:group] || Map.fetch!(config, :group)
+
+    uuid_seed_2 = "#{event.name}-#{event.version}-#{event.event_id_seed_optional}"
+    id = uuid_module.uuid5(event.event_id_seed, uuid_seed_2)
+
+    occurred_at = event.occurred_at || timex_module.now()
+
+    %{
+      id: id,
+      action: String.upcase(event.name),
+      group: group,
+      occurred_at: Timex.format!(occurred_at, "{ISO:Extended:Z}"),
+      version: event.version,
+      payload: event.payload
+    }
+  end
 end
