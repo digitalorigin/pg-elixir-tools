@@ -73,6 +73,17 @@ defmodule ElixirTools.Events.EventTest do
       assert_received({:publish_event, ^expected_event})
     end
 
+    test "uuid5 generation is called with a proper seed", context do
+      Event.publish(context.valid_event, context.opts)
+
+      assert_received :timex_now
+    end
+
+    test "sets when event.occurred_at when it is not specified", context do
+      event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
+      Event.publish(event, context.opts)
+    end
+
     test "returns error when adapter throws error", context do
       opts = [{:uuid_module, FakeUuid}, {:timex_module, FakeTimex}, {:adapter, FakeAdapterError}]
 
