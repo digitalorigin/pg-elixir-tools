@@ -40,9 +40,18 @@ defmodule ElixirTools.Events.EventTest do
   end
 
   setup do
+    payload = %{
+      amount: 1,
+      charge_id: "charge_id",
+      created_at: "created_at",
+      payment_method_id: "payment_method_id",
+      type: :card
+    }
+
     valid_event = %Event{
       name: "TEST_EVENT",
-      event_id_seed: "016c25fd-70e0-56fe-9d1a-56e80fa20b82"
+      event_id_seed: "016c25fd-70e0-56fe-9d1a-56e80fa20b82",
+      payload: payload
     }
 
     event_json_schema =
@@ -53,139 +62,19 @@ defmodule ElixirTools.Events.EventTest do
     %{valid_event: valid_event, event_json_schema: event_json_schema, opts: opts}
   end
 
-  describe "publish/2" do
+  describe "publish_deprecated/2" do
     test "returns :ok when it's succesfully sent", context do
-      assert Event.publish(context.valid_event, context.opts) == :ok
+      assert Event.publish_deprecated(context.valid_event, context.opts) == :ok
     end
 
     test "sends expected event structure to adapter", context do
-      Event.publish(context.valid_event, context.opts)
+      Event.publish_deprecated(context.valid_event, context.opts)
 
       expected_event = %{
         action: "TEST_EVENT",
         group: "EVENT_GROUP",
         id: "55989ea4-d947-4f16-b8c8-e0e888facff4",
         occurred_at: "2015-06-29T05:55:55Z",
-        payload: %{},
-        version: "1.0.0"
-      }
-
-      assert_received({:publish_event, ^expected_event})
-    end
-
-    test "uuid5 generation is called with a proper seed", context do
-      Event.publish(context.valid_event, context.opts)
-
-      assert_received({:uuid5, ["016c25fd-70e0-56fe-9d1a-56e80fa20b82", "TEST_EVENT-1.0.0-"]})
-    end
-
-    test "sets when event.occurred_at when it is not specified", context do
-      event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
-      Event.publish(event, context.opts)
-
-      assert_received(:timex_now)
-    end
-
-    test "returns error when adapter throws error", context do
-      opts = [{:uuid_module, FakeUuid}, {:timex_module, FakeTimex}, {:adapter, FakeAdapterError}]
-
-      assert Event.publish(context.valid_event, opts) == {:error, %RuntimeError{message: "ERROR"}}
-    end
-
-    test "returns error when version is not a string", context do
-      event = %{context.valid_event | version: 1}
-
-      assert Event.publish(event, context.opts) == {:error, "Expected a string with a version"}
-    end
-
-    test "returns error when version is not having major.minor.fix format", context do
-      event = %{context.valid_event | version: "1.1"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected version with 3 dots, but received 1.1"}
-    end
-
-    test "returns error when version major is not an integer", context do
-      event = %{context.valid_event | version: "1a.1.1"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a number for the major, but received 1a.1.1"}
-    end
-
-    test "returns error when version minor is not an integer", context do
-      event = %{context.valid_event | version: "1.1a.1"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a number for the minor, but received 1.1a.1"}
-    end
-
-    test "returns error when version fix is not an integer", context do
-      event = %{context.valid_event | version: "1.1.1a"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a number for the fix, but received 1.1.1a"}
-    end
-
-    test "returns error when name does not contain an underscore", context do
-      event = %{context.valid_event | name: "EVENT"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected an underscore in the event name, but got EVENT instead"}
-    end
-
-    test "returns error when name is not a string", context do
-      event = %{context.valid_event | name: :EVENT}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a string as event name, but got :EVENT"}
-    end
-
-    test "returns error when they payload is not a map", context do
-      Enum.map([[], false, nil, 3, 0, "string", 'binary', :atom], fn value ->
-        event = %{context.valid_event | payload: value}
-
-        assert Event.publish(event, context.opts) == {:error, "Expected payload to be a map"}
-      end)
-    end
-
-    test "returns error when event_id_seed is not a UUID string", context do
-      event = %{context.valid_event | event_id_seed: "not uuid string"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a UUID string as event_id_seed, but got \"not uuid string\""}
-    end
-
-    test "returns error when event_id_seed_optional is not a string", context do
-      event = %{context.valid_event | event_id_seed_optional: 123}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a string as event_id_seed_optional, but got 123"}
-    end
-
-    test "returns ok when event_id_seed_optional is string", context do
-      event = %{context.valid_event | event_id_seed_optional: "i am string"}
-
-      assert Event.publish(event, context.opts) == :ok
-    end
-
-    test "returns error when occurred_at is not a datetime", context do
-      event = %{context.valid_event | occurred_at: "not a datetime"}
-
-      assert Event.publish(event, context.opts) ==
-               {:error, "Expected a DateTime as occurred_at, but got \"not a datetime\""}
-    end
-
-    test "returns ok when occurred_at is datetime", context do
-      event = %{context.valid_event | occurred_at: Timex.now()}
-
-      assert Event.publish(event, context.opts) == :ok
-    end
-  end
-
-  describe "validate_json_schema/2" do
-    test "returns ok when json schema validates event", context do
-      event = %Event{
-        name: "CHARGE_CREATED",
         payload: %{
           amount: 1,
           charge_id: "charge_id",
@@ -193,24 +82,237 @@ defmodule ElixirTools.Events.EventTest do
           payment_method_id: "payment_method_id",
           type: :card
         },
-        version: "1.0.0",
-        event_id_seed: "22833003-fb25-4961-8373-f01da28ec820"
+        version: "1.0.0"
       }
 
-      assert Event.validate_json_schema(context.event_json_schema, event) == :ok
+      assert_received({:publish_event, ^expected_event})
+    end
+
+    test "uuid5 generation is called with a proper seed", context do
+      Event.publish_deprecated(context.valid_event, context.opts)
+
+      assert_received({:uuid5, ["016c25fd-70e0-56fe-9d1a-56e80fa20b82", "TEST_EVENT-1.0.0-"]})
+    end
+
+    test "sets when event.occurred_at when it is not specified", context do
+      event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
+      Event.publish_deprecated(event, context.opts)
+
+      assert_received(:timex_now)
+    end
+
+    test "returns error when adapter throws error", context do
+      opts = [{:uuid_module, FakeUuid}, {:timex_module, FakeTimex}, {:adapter, FakeAdapterError}]
+
+      assert Event.publish_deprecated(context.valid_event, opts) ==
+               {:error, %RuntimeError{message: "ERROR"}}
+    end
+
+    test "returns error when version is not a string", context do
+      event = %{context.valid_event | version: 1}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a string with a version"}
+    end
+
+    test "returns error when version is not having major.minor.fix format", context do
+      event = %{context.valid_event | version: "1.1"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected version with 3 dots, but received 1.1"}
+    end
+
+    test "returns error when version major is not an integer", context do
+      event = %{context.valid_event | version: "1a.1.1"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a number for the major, but received 1a.1.1"}
+    end
+
+    test "returns error when version minor is not an integer", context do
+      event = %{context.valid_event | version: "1.1a.1"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a number for the minor, but received 1.1a.1"}
+    end
+
+    test "returns error when version fix is not an integer", context do
+      event = %{context.valid_event | version: "1.1.1a"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a number for the fix, but received 1.1.1a"}
+    end
+
+    test "returns error when name does not contain an underscore", context do
+      event = %{context.valid_event | name: "EVENT"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected an underscore in the event name, but got EVENT instead"}
+    end
+
+    test "returns error when name is not a string", context do
+      event = %{context.valid_event | name: :EVENT}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a string as event name, but got :EVENT"}
+    end
+
+    test "returns error when they payload is not a map", context do
+      Enum.map([[], false, nil, 3, 0, "string", 'binary', :atom], fn value ->
+        event = %{context.valid_event | payload: value}
+
+        assert Event.publish_deprecated(event, context.opts) ==
+                 {:error, "Expected payload to be a map"}
+      end)
+    end
+
+    test "returns error when event_id_seed is not a UUID string", context do
+      event = %{context.valid_event | event_id_seed: "not uuid string"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a UUID string as event_id_seed, but got \"not uuid string\""}
+    end
+
+    test "returns error when event_id_seed_optional is not a string", context do
+      event = %{context.valid_event | event_id_seed_optional: 123}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a string as event_id_seed_optional, but got 123"}
+    end
+
+    test "returns ok when event_id_seed_optional is string", context do
+      event = %{context.valid_event | event_id_seed_optional: "i am string"}
+
+      assert Event.publish_deprecated(event, context.opts) == :ok
+    end
+
+    test "returns error when occurred_at is not a datetime", context do
+      event = %{context.valid_event | occurred_at: "not a datetime"}
+
+      assert Event.publish_deprecated(event, context.opts) ==
+               {:error, "Expected a DateTime as occurred_at, but got \"not a datetime\""}
+    end
+
+    test "returns ok when occurred_at is datetime", context do
+      event = %{context.valid_event | occurred_at: Timex.now()}
+
+      assert Event.publish_deprecated(event, context.opts) == :ok
+    end
+  end
+
+  describe "publish/3" do
+    test "returns :ok when it's succesfully sent", context do
+      assert Event.publish(context.valid_event, context.event_json_schema, context.opts) == :ok
+    end
+
+    test "sends expected event structure to adapter", context do
+      Event.publish(context.valid_event, context.event_json_schema, context.opts)
+
+      expected_event = %{
+        action: "TEST_EVENT",
+        group: "EVENT_GROUP",
+        id: "55989ea4-d947-4f16-b8c8-e0e888facff4",
+        occurred_at: "2015-06-29T05:55:55Z",
+        payload: %{
+          amount: 1,
+          charge_id: "charge_id",
+          created_at: "created_at",
+          payment_method_id: "payment_method_id",
+          type: :card
+        },
+        version: "1.0.0"
+      }
+
+      assert_received({:publish_event, ^expected_event})
+    end
+
+    test "uuid5 generation is called with a proper seed", context do
+      Event.publish(context.valid_event, context.event_json_schema, context.opts)
+
+      assert_received({:uuid5, ["016c25fd-70e0-56fe-9d1a-56e80fa20b82", "TEST_EVENT-1.0.0-"]})
+    end
+
+    test "uuid5 generation is called with a proper seed when option seed is provided", context do
+      event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
+
+      Event.publish(event, context.event_json_schema, context.opts)
+
+      assert_received(
+        {:uuid5,
+         ["016c25fd-70e0-56fe-9d1a-56e80fa20b82", "TEST_EVENT-1.0.0-event_id_seed_optional"]}
+      )
+    end
+
+    test "sets event occurred_at when it is not specified", context do
+      Event.publish(context.valid_event, context.event_json_schema, context.opts)
+
+      assert_received(:timex_now)
+    end
+
+    test "sets expected occurred_at when specified", context do
+      occurred_at = DateTime.utc_now()
+      event = %{context.valid_event | occurred_at: occurred_at}
+
+      Event.publish(event, context.event_json_schema, context.opts)
+
+      expected_event = %{
+        action: "TEST_EVENT",
+        group: "EVENT_GROUP",
+        id: "55989ea4-d947-4f16-b8c8-e0e888facff4",
+        occurred_at: Timex.format!(occurred_at, "{ISO:Extended:Z}"),
+        payload: %{
+          amount: 1,
+          charge_id: "charge_id",
+          created_at: "created_at",
+          payment_method_id: "payment_method_id",
+          type: :card
+        },
+        version: "1.0.0"
+      }
+
+      assert_received({:publish_event, ^expected_event})
+      refute_received(:timex_now)
+    end
+
+    test "returns error when adapter throws error", context do
+      opts = [{:uuid_module, FakeUuid}, {:timex_module, FakeTimex}, {:adapter, FakeAdapterError}]
+
+      assert Event.publish(context.valid_event, context.event_json_schema, opts) ==
+               {:error, %RuntimeError{message: "ERROR"}}
+    end
+  end
+
+  describe "validate_json_schema/2" do
+    test "returns ok when json schema validates event", context do
+      enveloped_event = %{
+        action: "TEST_EVENT",
+        group: "EVENT_GROUP",
+        id: "55989ea4-d947-4f16-b8c8-e0e888facff4",
+        occurred_at: "2015-06-29T05:55:55Z",
+        payload: %{
+          amount: 1,
+          charge_id: "charge_id",
+          created_at: "created_at",
+          payment_method_id: "payment_method_id",
+          type: :card
+        },
+        version: "1.0.0"
+      }
+
+      assert Event.validate_json_schema(enveloped_event, context.event_json_schema) == :ok
     end
 
     test "returns error when json schema doesnt validate event", context do
-      invalid_event = %Event{
+      invalid_event = %{
         name: "CHARGE_CREATED",
         version: "1.0.0",
         event_id_seed: "22833003-fb25-4961-8373-f01da28ec820"
       }
 
-      {:error, reason} = Event.validate_json_schema(context.event_json_schema, invalid_event)
+      {:error, reason} = Event.validate_json_schema(invalid_event, context.event_json_schema)
 
       assert reason ==
-               "Required properties amount, charge_id, created_at, payment_method_id, type were not present.: #/payload"
+               "Required properties id, action, group, occurred_at, payload were not present.: #"
     end
   end
 end

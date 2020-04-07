@@ -13,56 +13,45 @@ defmodule ElixirTools.Events.EventHandlerTest do
     end
   end
 
-  defmodule EventFakeOk do
+  defmodule EventDeprecatedFakeOk do
     use ElixirTools.ContractImpl, module: ElixirTools.Events.Event
 
     @impl true
-    def publish(event) do
+    def publish_deprecated(event) do
       send(self(), {:publish, event})
-
-      :ok
-    end
-
-    @impl true
-    def validate_json_schema(schema, event) do
-      send(self(), {:validate_json_schema, [schema, event]})
 
       :ok
     end
   end
 
-  defmodule EventFakeKoValidation do
+  defmodule EventFakeOk do
     use ElixirTools.ContractImpl, module: ElixirTools.Events.Event
 
     @impl true
-    def publish(event) do
-      send(self(), {:publish, event})
+    def publish(event, schema) do
+      send(self(), {:publish, [event, schema]})
 
       :ok
     end
+  end
 
+  defmodule EventDeprecatedFakeFail do
+    use ElixirTools.ContractImpl, module: ElixirTools.Events.Event
     @impl true
-    def validate_json_schema(schema, event) do
-      send(self(), {:validate_json_schema, [schema, event]})
+    def publish_deprecated(event) do
+      send(self(), {:publish, event})
 
-      {:error, "reason"}
+      {:error, %RuntimeError{message: "sns not supported in region eu-north-1 for partition aws"}}
     end
   end
 
   defmodule EventFakeFail do
     use ElixirTools.ContractImpl, module: ElixirTools.Events.Event
     @impl true
-    def publish(event) do
-      send(self(), {:publish, event})
+    def publish(event, schema) do
+      send(self(), {:publish, [event, schema]})
 
       {:error, %RuntimeError{message: "sns not supported in region eu-north-1 for partition aws"}}
-    end
-
-    @impl true
-    def validate_json_schema(schema, event) do
-      send(self(), {:validate_json_schema, [schema, event]})
-
-      :ok
     end
   end
 
@@ -152,7 +141,10 @@ defmodule ElixirTools.Events.EventHandlerTest do
 
   describe "publish/2" do
     test "event is published as expected", %{event: event} do
-      opts = [{:task_supervisor_module, TaskSupervisorFake}, {:event_module, EventFakeOk}]
+      opts = [
+        {:task_supervisor_module, TaskSupervisorFake},
+        {:event_module, EventDeprecatedFakeOk}
+      ]
 
       assert EventHandler.publish(event, opts) == :ok
 
@@ -163,7 +155,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
     test "event publishing call returns error", %{event: event} do
       opts = [
         {:task_supervisor_module, TaskSupervisorFake},
-        {:event_module, EventFakeFail},
+        {:event_module, EventDeprecatedFakeFail},
         {:telemetry_module, TelemetryFake}
       ]
 
@@ -176,7 +168,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
     test "if event not publish telemtry metric is sent", %{event: event} do
       opts = [
         {:task_supervisor_module, TaskSupervisorFake},
-        {:event_module, EventFakeFail},
+        {:event_module, EventDeprecatedFakeFail},
         {:telemetry_module, TelemetryFake}
       ]
 
@@ -199,7 +191,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
     test "save event to DB if it was not published", %{event: event} do
       opts = [
         {:task_supervisor_module, TaskSupervisorFake},
-        {:event_module, EventFakeFail},
+        {:event_module, EventDeprecatedFakeFail},
         {:not_sent_event_module, FakeNotSentEvent}
       ]
 
@@ -225,58 +217,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
       expected_schema = context.schema
 
       assert_received(:start)
-      assert_received({:publish, ^expected_event})
-      assert_received({:validate_json_schema, [^expected_schema, ^expected_event]})
-    end
-
-    test "event is not published when schema doesnt validate", context do
-      opts = [
-        {:task_supervisor_module, TaskSupervisorFake},
-        {:event_module, EventFakeKoValidation},
-        {:not_sent_event_module, FakeNotSentEvent},
-        {:telemetry_module, TelemetryFake}
-      ]
-
-      wrong_event = Map.drop(context.event, [:version])
-
-      assert EventHandler.publish(wrong_event, context.schema, opts) == :ok
-
-      assert_received(
-        {:create_not_sent_event,
-         %{
-           content:
-             "{\"event_id_seed\":\"22833003-fb25-4961-8373-f01da28ec820\",\"event_id_seed_optional\":\"\",\"name\":\"CHARGE_CREATED\",\"occurred_at\":null,\"payload\":{\"amount\":1,\"charge_id\":\"charge_id\",\"created_at\":\"created_at\",\"payment_method_id\":\"payment_method_id\",\"type\":\"card\"},\"reason\":\"\\\"reason\\\"\"}"
-         }}
-      )
-
-      expected_schema = context.schema
-
-      assert_received(:start)
-      refute_received({:publish, _})
-      assert_received({:validate_json_schema, [^expected_schema, ^wrong_event]})
-
-      expected_error_info = %{
-        event_id_seed: "22833003-fb25-4961-8373-f01da28ec820",
-        event_id_seed_optional: "",
-        name: "CHARGE_CREATED",
-        occurred_at: nil,
-        payload: %{
-          amount: 1,
-          charge_id: "charge_id",
-          created_at: "created_at",
-          payment_method_id: "payment_method_id",
-          type: :card
-        },
-        reason: "\"reason\""
-      }
-
-      assert_received(
-        {:telemetry_execute,
-         %{
-           event_name: [:pagantis_elixir_tools, :events, :not_sent],
-           measurements: %{error_info: ^expected_error_info}
-         }}
-      )
+      assert_received({:publish, [^expected_event, ^expected_schema]})
     end
 
     test "event publishing call returns error", context do
@@ -292,8 +233,7 @@ defmodule ElixirTools.Events.EventHandlerTest do
       expected_schema = context.schema
 
       assert_received(:start)
-      assert_received({:publish, ^expected_event})
-      assert_received({:validate_json_schema, [^expected_schema, ^expected_event]})
+      assert_received({:publish, [^expected_event, ^expected_schema]})
     end
 
     test "if event not publish telemetry metric is sent", context do
