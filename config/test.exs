@@ -9,6 +9,8 @@ config :pagantis_elixir_tools, ElixirTools.Metrix,
   enabled: false,
   recurrent_metrics: []
 
+config :pagantis_elixir_tools, ElixirTools.Events, adapter_config: %{group: "EVENT_GROUP"}
+
 config :pagantis_elixir_tools, ElixirTools.Schema, default_repo: Support.TestRepo
 
 config :pagantis_elixir_tools, ElixirTools.HttpClient, response_timeout: 1500

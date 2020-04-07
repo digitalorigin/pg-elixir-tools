@@ -29,13 +29,17 @@ defmodule ElixirTools.Events.Event do
     event_id_seed_optional: ""
   ]
 
-  @spec publish(t, module | nil) :: return
-  def publish(event, adapter \\ nil) do
-    adapter = adapter || Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter]
+  @typep publish_opts :: {:adapter, module} | {:uuid_module, module} | {:timex_module, module}
+  @spec publish(Event.t(), [publish_opts]) :: return
+  def publish(event, opts \\ []) do
+    adapter =
+      opts[:adapter] || Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter]
 
     with :ok <- validate(event) do
       try do
-        adapter.publish(event)
+        event
+        |> add_envelope(opts)
+        |> adapter.publish()
       rescue
         e -> {:error, e}
       end
@@ -122,5 +126,27 @@ defmodule ElixirTools.Events.Event do
       {:parse_minor, _} -> {:error, "Expected a number for the minor, but received #{version}"}
       {:parse_fix, _} -> {:error, "Expected a number for the fix, but received #{version}"}
     end
+  end
+
+  @spec add_envelope(Event.t(), [publish_opts]) :: map
+  defp add_envelope(event, opts) do
+    uuid_module = opts[:uuid_module] || UUID
+    timex_module = opts[:timex_module] || Timex
+
+    config = Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter_config]
+    group = Map.fetch!(config, :group)
+
+    uuid_seed_2 = "#{event.name}-#{event.version}-#{event.event_id_seed_optional}"
+    id = uuid_module.uuid5(event.event_id_seed, uuid_seed_2)
+    occurred_at = event.occurred_at || timex_module.now()
+
+    %{
+      id: id,
+      action: String.upcase(event.name),
+      group: group,
+      occurred_at: Timex.format!(occurred_at, "{ISO:Extended:Z}"),
+      version: event.version,
+      payload: event.payload
+    }
   end
 end
