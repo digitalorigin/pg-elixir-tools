@@ -10,7 +10,6 @@ defmodule ElixirTools.Events.Adapters.AwsSns do
   @typep publish_opt ::
            {:aws_module, module}
            | {:sns_module, module}
-           | {:group, String.t()}
            | {:topic, String.t()}
 
   @impl true
