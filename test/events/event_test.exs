@@ -24,7 +24,7 @@ defmodule ElixirTools.Events.EventTest do
 
     @impl true
     def uuid5(uuid_seed_1, uuid_seed_2) do
-      send(self(), [:uuid5, uuid_seed_1, uuid_seed_2])
+      send(self(), {:uuid5, [uuid_seed_1, uuid_seed_2]})
       "55989ea4-d947-4f16-b8c8-e0e888facff4"
     end
   end
@@ -76,12 +76,14 @@ defmodule ElixirTools.Events.EventTest do
     test "uuid5 generation is called with a proper seed", context do
       Event.publish(context.valid_event, context.opts)
 
-      assert_received :timex_now
+      assert_received({:uuid5, ["016c25fd-70e0-56fe-9d1a-56e80fa20b82", "TEST_EVENT-1.0.0-"]})
     end
 
     test "sets when event.occurred_at when it is not specified", context do
       event = %{context.valid_event | event_id_seed_optional: "event_id_seed_optional"}
       Event.publish(event, context.opts)
+
+      assert_received(:timex_now)
     end
 
     test "returns error when adapter throws error", context do
