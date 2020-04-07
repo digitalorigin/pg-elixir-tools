@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.19.1 (2020-04-07)
+* Events: creation refactor.
+
 ## 0.19.0 (2020-04-01)
 * Events: publish event with JSON schema validation.
 
