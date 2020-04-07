@@ -17,6 +17,7 @@ defmodule ElixirTools.Events.Event do
           occurred_at: DateTime.t() | nil
         }
 
+  @typep event_schema :: map
   @typep return :: :ok | {:error, reason :: String.t()}
 
   @enforce_keys ~w(name event_id_seed)a
@@ -30,8 +31,8 @@ defmodule ElixirTools.Events.Event do
   ]
 
   @typep publish_opts :: {:adapter, module} | {:uuid_module, module} | {:timex_module, module}
-  @spec publish(Event.t(), [publish_opts]) :: return
-  def publish(event, opts \\ []) do
+  @spec publish_deprecated(Event.t(), [publish_opts]) :: return
+  def publish_deprecated(event, opts \\ []) do
     adapter =
       opts[:adapter] || Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter]
 
@@ -40,6 +41,22 @@ defmodule ElixirTools.Events.Event do
         event
         |> add_envelope(opts)
         |> adapter.publish()
+      rescue
+        e -> {:error, e}
+      end
+    end
+  end
+
+  @spec publish(Event.t(), event_schema, [publish_opts]) :: return
+  def publish(event, schema, opts \\ []) do
+    adapter =
+      opts[:adapter] || Application.get_env(:pagantis_elixir_tools, ElixirTools.Events)[:adapter]
+
+    enveloped_event = add_envelope(event, opts)
+
+    with :ok <- validate_json_schema(enveloped_event, schema) do
+      try do
+        adapter.publish(enveloped_event)
       rescue
         e -> {:error, e}
       end
@@ -58,9 +75,8 @@ defmodule ElixirTools.Events.Event do
     end
   end
 
-  @typep event_schema :: map
-  @spec validate_json_schema(event_schema, Event.t()) :: :ok | {:error, String.t()}
-  def validate_json_schema(schema, event) do
+  @spec validate_json_schema(Event.t(), event_schema) :: return
+  def validate_json_schema(event, schema) do
     stringified_keys_event = to_string_keys(event)
 
     case Validator.validate(schema, stringified_keys_event) do
@@ -70,7 +86,7 @@ defmodule ElixirTools.Events.Event do
   end
 
   @spec to_string_keys(Event.t()) :: map
-  defp to_string_keys(event), do: event |> Map.from_struct() |> Jason.encode!() |> Jason.decode!()
+  defp to_string_keys(event), do: event |> Jason.encode!() |> Jason.decode!()
 
   @spec validate_occurred_at(any) :: return
   defp validate_occurred_at(%DateTime{}), do: :ok
