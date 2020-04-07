@@ -75,7 +75,7 @@ defmodule ElixirTools.Events.Event do
     end
   end
 
-  @spec validate_json_schema(Event.t(), event_schema) :: return
+  @spec validate_json_schema(map, event_schema) :: return
   def validate_json_schema(event, schema) do
     stringified_keys_event = to_string_keys(event)
 
@@ -85,7 +85,7 @@ defmodule ElixirTools.Events.Event do
     end
   end
 
-  @spec to_string_keys(Event.t()) :: map
+  @spec to_string_keys(map) :: map
   defp to_string_keys(event), do: event |> Jason.encode!() |> Jason.decode!()
 
   @spec validate_occurred_at(any) :: return
