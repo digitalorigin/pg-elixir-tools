@@ -81,7 +81,7 @@ defmodule ElixirTools.Events.EventHandler do
   end
 
   @spec publish_event_call(Event.t(), event_schema, [events_opt]) :: :ok | :error
-  def publish_event_call(event, schema, opts) do
+  defp publish_event_call(event, schema, opts) do
     event_module = opts[:event_module] || Event
 
     case event_module.publish(event, schema) do
