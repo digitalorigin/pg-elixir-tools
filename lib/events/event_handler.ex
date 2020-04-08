@@ -71,7 +71,7 @@ defmodule ElixirTools.Events.EventHandler do
   end
 
   @spec publish_event_call(Event.t(), [events_opt]) :: :ok | :error
-  def publish_event_call(event, opts) do
+  defp publish_event_call(event, opts) do
     event_module = opts[:event_module] || Event
 
     case event_module.publish_deprecated(event) do
