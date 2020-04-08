@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.20.1 (2020-04-08)
+* Events: EventFakeModule test support for publish/3.
+
 ## 0.20.0 (2020-04-08)
 * Events: publish event with JSON schema validation improvement.
 
