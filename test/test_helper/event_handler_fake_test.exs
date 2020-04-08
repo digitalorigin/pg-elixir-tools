@@ -11,6 +11,13 @@ defmodule ElixirTools.TestHelper.EventHandlerFakeTest do
     end
   end
 
+  describe "publish/3" do
+    test "returns expected value and sends expected message" do
+      assert EventHandlerFake.publish("event", "schema", "opts") == :ok
+      assert_received {:publish_event, ["event", "schema"]}
+    end
+  end
+
   describe "create/3" do
     test "returns expected value and sends expected message" do
       event = %Event{name: "event_name", payload: "payload", event_id_seed: "event_id_seed"}
