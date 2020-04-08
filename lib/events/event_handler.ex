@@ -61,24 +61,30 @@ defmodule ElixirTools.Events.EventHandler do
 
   @spec publish(Event.t(), event_schema, [events_opt]) :: :ok
   def publish(event, schema, opts) do
-    event_module = opts[:event_module] || Event
     task_supervisor_module = opts[:task_supervisor_module] || Task.Supervisor
 
     task_supervisor_module.async_nolink(ElixirTools.TaskSupervisor, fn ->
-      case event_module.validate_json_schema(schema, event) do
-        :ok -> publish_event_call(event, opts)
-        {:error, reason} -> handle_error(event, reason, opts)
-      end
+      publish_event_call(event, schema, opts)
     end)
 
     :ok
   end
 
   @spec publish_event_call(Event.t(), [events_opt]) :: :ok | :error
-  def publish_event_call(event, opts) do
+  defp publish_event_call(event, opts) do
     event_module = opts[:event_module] || Event
 
-    case event_module.publish(event) do
+    case event_module.publish_deprecated(event) do
+      {:error, reason} -> handle_error(event, reason, opts)
+      _ -> :ok
+    end
+  end
+
+  @spec publish_event_call(Event.t(), event_schema, [events_opt]) :: :ok | :error
+  defp publish_event_call(event, schema, opts) do
+    event_module = opts[:event_module] || Event
+
+    case event_module.publish(event, schema) do
       {:error, reason} -> handle_error(event, reason, opts)
       _ -> :ok
     end

@@ -5,42 +5,42 @@
     "title": "The Root Schema",
     "description": "The root schema comprises the entire JSON document.",
     "required": [
-        "event_id_seed",
-        "event_id_seed_optional",
-        "name",
+        "id",
+        "action",
+        "group",
         "occurred_at",
         "payload",
         "version"
     ],
     "properties": {
-        "event_id_seed": {
-            "id": "#/properties/event_id_seed",
+        "id": {
+            "id": "#/properties/id",
             "type": "string",
-            "title": "The Event_id_seed Schema",
+            "title": "The Id Schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
             "examples": [
                 "22833003-fb25-4961-8373-f01da28ec820"
             ]
         },
-        "event_id_seed_optional": {
-            "id": "#/properties/event_id_seed_optional",
+        "action": {
+            "id": "#/properties/action",
             "type": "string",
-            "title": "The Event_id_seed_optional Schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                ""
-            ]
-        },
-        "name": {
-            "id": "#/properties/name",
-            "type": "string",
-            "title": "The Name Schema",
+            "title": "The Action Schema",
             "description": "An explanation about the purpose of this instance.",
             "default": "",
             "examples": [
                 "CHARGE_CREATED"
+            ]
+        },
+        "group": {
+            "id": "#/properties/group",
+            "type": "string",
+            "title": "The Group Schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "EVENT_GROUP"
             ]
         },
         "occurred_at": {
