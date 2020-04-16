@@ -1,4 +1,6 @@
 # Changelog
+# 0.21.1 (2020-04-16)
+* Remove Rollbax as a required dependency
 
 ## 0.21.0 (2020-04-16)
 * Metrix.Plug: Stop sending request_path in metrics for every request.
