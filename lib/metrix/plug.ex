@@ -41,7 +41,6 @@ defmodule ElixirTools.Metrix.Plug do
       controller: Tags.controller_name(conn),
       action: Tags.method_name(conn),
       http_method: conn.method,
-      request_path: Tags.request_path(conn),
       api_version: Tags.api_version(conn),
       response_status_code: conn.status,
       response_status_code_class: Tags.response_status_code_class(conn)
