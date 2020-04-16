@@ -14,5 +14,3 @@ config :pagantis_elixir_tools, ElixirTools.Events, adapter_config: %{group: "EVE
 config :pagantis_elixir_tools, ElixirTools.Schema, default_repo: Support.TestRepo
 
 config :pagantis_elixir_tools, ElixirTools.HttpClient, response_timeout: 1500
-
-config :rollbax, enabled: false
