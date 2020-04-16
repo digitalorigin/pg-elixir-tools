@@ -54,8 +54,7 @@ defmodule ElixirTools.MixProject do
       {:ja_serializer, "~> 0.14"},
       {:ecto_sql, "~> 3.0"},
       {:statix, ">= 0.0.0"},
-      {:httpoison, "~> 1.4"},
-      {:rollbax, ">= 0.0.0"}
+      {:httpoison, "~> 1.4"}
     ]
   end
 

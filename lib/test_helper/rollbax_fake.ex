@@ -1,14 +1,10 @@
 defmodule ElixirTools.RollbaxFake do
-  use ElixirTools.ContractImpl, module: Rollbax
-
-  @impl true
   def report_message(level, message, custom \\ %{}, occurrence_data \\ %{}) do
     ensure_no_struct(custom)
     ensure_no_struct(occurrence_data)
     send(self(), [:rollbax_message, level, message, custom, occurrence_data])
   end
 
-  @impl true
   def report(kind, value, stacktrace, custom \\ %{}, occurrence_data \\ %{}) do
     ensure_no_struct(custom)
     ensure_no_struct(occurrence_data)
