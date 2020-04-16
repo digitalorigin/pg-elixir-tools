@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.21.0 (2020-04-16)
+* Metrix.Plug: Stop sending request_path in metrics for every request.
+
 ## 0.20.1 (2020-04-08)
 * Events: EventFakeModule test support for publish/3.
 
