@@ -86,7 +86,6 @@ defmodule ElixirTools.Metrix.PlugTest do
         api_version: "v1",
         controller: "MyController",
         http_method: "GET",
-        request_path: "/v1/my_controller",
         response_status_code: 200,
         response_status_code_class: "2xx"
       }
