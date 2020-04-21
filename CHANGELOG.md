@@ -1,4 +1,7 @@
 # Changelog
+# 0.21.2 (2020-04-21)
+* Make EventHandler.publish_event_call function public
+
 # 0.21.1 (2020-04-16)
 * Remove Rollbax as a required dependency
 
