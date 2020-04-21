@@ -139,6 +139,44 @@ defmodule ElixirTools.Events.EventHandlerTest do
     end
   end
 
+  describe "publish_event_call/2" do
+    test "event is published as expected", %{event: event} do
+      opts = [{:event_module, EventDeprecatedFakeOk}]
+      assert EventHandler.publish_event_call(event, opts) == :ok
+      assert_received({:publish, ^event})
+    end
+
+    test "event publishing call returns error", %{event: event} do
+      opts = [
+        {:task_supervisor_module, TaskSupervisorFake},
+        {:event_module, EventDeprecatedFakeFail},
+        {:telemetry_module, TelemetryFake}
+      ]
+
+      assert EventHandler.publish_event_call(event, opts) == :error
+      assert_received({:publish, ^event})
+    end
+  end
+
+  describe "publish_event_call/3" do
+    test "event is published as expected", %{event: event, schema: schema} do
+      opts = [{:event_module, EventFakeOk}]
+      assert EventHandler.publish_event_call(event, schema, opts) == :ok
+      assert_received({:publish, [^event, ^schema]})
+    end
+
+    test "event publishing call returns error", %{event: event, schema: schema} do
+      opts = [
+        {:task_supervisor_module, TaskSupervisorFake},
+        {:event_module, EventFakeFail},
+        {:telemetry_module, TelemetryFake}
+      ]
+
+      assert EventHandler.publish_event_call(event, schema, opts) == :error
+      assert_received({:publish, [^event, ^schema]})
+    end
+  end
+
   describe "publish/2" do
     test "event is published as expected", %{event: event} do
       opts = [
