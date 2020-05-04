@@ -18,6 +18,20 @@ defmodule ElixirTools.TestHelper.EventHandlerFakeTest do
     end
   end
 
+  describe "publish_event_call/2" do
+    test "returns expected value and sends expected message" do
+      assert EventHandlerFake.publish_event_call("event", "opts") == :ok
+      assert_received {:publish_event_call, "event"}
+    end
+  end
+
+  describe "publish_event_call/3" do
+    test "returns expected value and sends expected message" do
+      assert EventHandlerFake.publish_event_call("event", "schema", "opts") == :ok
+      assert_received {:publish_event_call, ["event", "schema"]}
+    end
+  end
+
   describe "create/3" do
     test "returns expected value and sends expected message" do
       event = %Event{name: "event_name", payload: "payload", event_id_seed: "event_id_seed"}
