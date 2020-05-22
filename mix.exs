@@ -39,7 +39,7 @@ defmodule ElixirTools.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix, "~> 1.4.0"},
+      {:phoenix, "~> 1.5.3"},
       {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo_naming, "~> 0.5", only: [:dev, :test], runtime: false},
