@@ -1,5 +1,5 @@
 # image for pg-elixir-tools
-FROM elixir:1.10.0-slim
+FROM elixir:1.10.3-slim
 
 EXPOSE 4000
 
