@@ -6,14 +6,24 @@ defmodule ElixirTools.HttpClientTest do
   alias ElixirTools.HttpClient
 
   defmodule FakeAdapter do
-    @behaviour ElixirTools.HttpClient.Adapter
+    use ElixirTools.HttpClient.Adapter
 
     @impl true
     def base_uri(), do: "http://test.com/"
   end
 
+  defmodule FakeAdapterWithHeaders do
+    use ElixirTools.HttpClient.Adapter
+
+    @impl true
+    def base_uri(), do: "http://test.com/"
+
+    @impl true
+    def default_headers(), do: [{"Custom-Header-1", "Something"}, {"Custom-Header-2", "Else"}]
+  end
+
   defmodule InvalidBasePathAdapter do
-    @behaviour ElixirTools.HttpClient.Adapter
+    use ElixirTools.HttpClient.Adapter
 
     @impl true
     def base_uri(), do: ""
@@ -190,7 +200,8 @@ defmodule ElixirTools.HttpClientTest do
 
       HttpClient.get(FakeAdapter, path, http_client: FakeHttpClient)
 
-      assert_received([%{path: ^path}, _, _])
+      expected_url = "http://test.com/path"
+      assert_received([^expected_url, _, _])
     end
 
     test "overrides headers" do
@@ -200,7 +211,16 @@ defmodule ElixirTools.HttpClientTest do
 
       HttpClient.get(FakeAdapter, path, headers: custom_headers, http_client: FakeHttpClient)
 
-      assert_received([%{path: ^path}, ^custom_headers, _opts])
+      assert_received([_, ^custom_headers, _opts])
+    end
+
+    test "can set default headers" do
+      path = "/test-headers"
+
+      HttpClient.get(FakeAdapterWithHeaders, path, http_client: FakeHttpClient)
+      expected_headers = [{"Custom-Header-1", "Something"}, {"Custom-Header-2", "Else"}]
+
+      assert_received([_, ^expected_headers, _opts])
     end
 
     test "we send the option to extend the timeout" do
@@ -216,8 +236,8 @@ defmodule ElixirTools.HttpClientTest do
     end
 
     test "decodes json response body to map" do
-      url = "test-headers"
-      {:ok, response} = HttpClient.get(FakeAdapter, url, http_client: FakeHttpClient)
+      path = "test-headers"
+      {:ok, response} = HttpClient.get(FakeAdapter, path, http_client: FakeHttpClient)
       assert response.body == %{"foo" => "bar"}
     end
   end
@@ -235,10 +255,11 @@ defmodule ElixirTools.HttpClientTest do
     test "allows other http_client" do
       path = "/path"
       body = "some cool body"
+      expected_url = "http://test.com/path"
 
       HttpClient.post(FakeAdapter, path, body, http_client: FakeHttpClient)
 
-      assert_received([%{path: ^path}, ^body, _, _])
+      assert_received([^expected_url, ^body, _, _])
     end
 
     test "add headers" do
@@ -251,7 +272,8 @@ defmodule ElixirTools.HttpClientTest do
         http_client: FakeHttpClient
       )
 
-      assert_received([%{path: ^path}, ^body, headers, _opts])
+      expected_url = "http://test.com/test-headers"
+      assert_received([^expected_url, ^body, headers, _opts])
       assert Enum.member?(headers, {"HeaderToAdd", "value"})
       assert Enum.member?(headers, {"HeaderToAdd2", "value"})
     end
@@ -266,7 +288,8 @@ defmodule ElixirTools.HttpClientTest do
         http_client: FakeHttpClient
       )
 
-      assert_received([%{path: ^path}, ^body, ^custom_headers, _opts])
+      expected_url = "http://test.com/test-headers"
+      assert_received([^expected_url, ^body, ^custom_headers, _opts])
     end
 
     test "we send the option to extend the timeout" do
@@ -314,10 +337,11 @@ defmodule ElixirTools.HttpClientTest do
     test "allows other http_client" do
       path = "/path"
       body = "some cool body"
+      expected_url = "http://test.com/path"
 
       HttpClient.put(FakeAdapter, path, body, http_client: FakeHttpClient)
 
-      assert_received([%{path: ^path}, ^body, _, _])
+      assert_received([^expected_url, ^body, _, _])
     end
 
     test "overrides headers" do
@@ -327,7 +351,8 @@ defmodule ElixirTools.HttpClientTest do
 
       HttpClient.put(FakeAdapter, path, body, headers: custom_headers, http_client: FakeHttpClient)
 
-      assert_received([%{path: ^path}, ^body, ^custom_headers, _opts])
+      expected_url = "http://test.com/test-headers"
+      assert_received([^expected_url, ^body, ^custom_headers, _opts])
     end
 
     test "we send the option to extend the timeout" do
