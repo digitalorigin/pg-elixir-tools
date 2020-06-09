@@ -1,5 +1,8 @@
 # Changelog
 
+# 0.22.0 (2020-06-09)
+* HTTP Adapter now supports headers per provider
+
 # 0.21.3 (2020-06-09)
 * Dependency updates
 
