@@ -1,4 +1,8 @@
 # Changelog
+
+# 0.21.3 (2020-06-09)
+* Dependency updates
+
 # 0.21.2 (2020-04-21)
 * Make EventHandler.publish_event_call function public
 
