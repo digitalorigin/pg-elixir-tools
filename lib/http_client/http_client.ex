@@ -18,7 +18,7 @@ defmodule ElixirTools.HttpClient do
   @type request_body :: String.t()
   @type response_body :: HTTPoison.Response.t()
   @type header :: {String.t(), String.t()}
-  @type uri :: URI.t()
+  @type uri :: String.t()
   @type base_uri :: String.t()
   @type action :: :get | :create | :update
   @type adapter :: module

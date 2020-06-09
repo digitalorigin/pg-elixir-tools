@@ -11,7 +11,7 @@ defmodule ElixirTools.HttpClient.Adapter do
   @doc """
   Returns the token for a specific request.
   """
-  @callback default_headers() :: String.t()
+  @callback default_headers() :: [tuple]
 
   @optional_callbacks [default_headers: 0]
 
