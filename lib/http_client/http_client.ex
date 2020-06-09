@@ -18,7 +18,7 @@ defmodule ElixirTools.HttpClient do
   @type request_body :: String.t()
   @type response_body :: HTTPoison.Response.t()
   @type header :: {String.t(), String.t()}
-  @type uri :: URI.t()
+  @type uri :: String.t()
   @type base_uri :: String.t()
   @type action :: :get | :create | :update
   @type adapter :: module
@@ -34,7 +34,7 @@ defmodule ElixirTools.HttpClient do
       http_client.post(uri, request_body, headers, connection_options)
     end
 
-    do_request(post_request, opts)
+    do_request(adapter, post_request, opts)
   end
 
   @spec put(adapter, path, request_body, [put_opt]) :: {:ok, response_body} | {:error, term}
@@ -46,7 +46,7 @@ defmodule ElixirTools.HttpClient do
       http_client.put(uri, request_body, headers, connection_options)
     end
 
-    do_request(put_request, opts)
+    do_request(adapter, put_request, opts)
   end
 
   @spec get(adapter, path, [post_opt]) :: {:ok, response_body} | {:error, term}
@@ -58,13 +58,13 @@ defmodule ElixirTools.HttpClient do
       http_client.get(uri, headers, connection_options)
     end
 
-    do_request(get_request, opts)
+    do_request(adapter, get_request, opts)
   end
 
   @spec build_uri(base_uri, path) :: uri | no_return
   defp build_uri(base_uri, path) do
     adapter_base_uri = ensure_valid_uri!(base_uri)
-    URI.merge(adapter_base_uri, path)
+    Path.join(adapter_base_uri, path)
   end
 
   @spec ensure_valid_uri!(term) :: term | no_return
@@ -74,11 +74,11 @@ defmodule ElixirTools.HttpClient do
 
   defp ensure_valid_uri!(uri), do: uri
 
-  @spec do_request(fun(), [post_opt]) :: {:ok, response_body} | {:error, term}
-  defp do_request(request, opts) do
+  @spec do_request(adapter, fun(), [post_opt]) :: {:ok, response_body} | {:error, term}
+  defp do_request(adapter, request, opts) do
     headers_to_add = opts[:headers_to_add] || []
-    headers = opts[:headers] || default_headers()
-    headers = headers_to_add ++ headers
+    default_headers = opts[:headers] || adapter.default_headers()
+    headers = headers_to_add ++ default_headers
 
     connection_options = default_connection_options()
 
@@ -93,7 +93,7 @@ defmodule ElixirTools.HttpClient do
         if opts[:retry_closed] do
           response
         else
-          do_request(request, [{:retry_closed, true} | opts])
+          do_request(adapter, request, [{:retry_closed, true} | opts])
         end
 
       {:error, %HTTPoison.Error{}} = error_response ->
@@ -113,13 +113,6 @@ defmodule ElixirTools.HttpClient do
       {:error, _} ->
         raise "Invalid JSON returned from provider. Given: #{inspect(response.body)}"
     end
-  end
-
-  @spec default_headers :: [header]
-  defp default_headers() do
-    [
-      {"Content-Type", "application/json"}
-    ]
   end
 
   @spec http_client() :: module
