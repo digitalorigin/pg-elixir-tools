@@ -42,7 +42,7 @@ defmodule ElixirTools.MixProject do
       {:phoenix, "~> 1.5.3"},
       {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:credo_naming, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:credo_naming, "~> 1.0", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.9", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:ex_aws, "~> 2.0"},
